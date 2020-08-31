@@ -27,6 +27,10 @@ func isIpv4(theIP string) error {
 			return errors.WithMessagef(errParse, "passed string conversion fails for group: %v, parsed value: %v", i, v)
 		}
 
+		if i == 0 && groupNo == 0 {
+			return fmt.Errorf("passed string starts with zero in group: %v, parsed value: %v", i, v)
+		}
+
 		if groupNo < 0 {
 			return fmt.Errorf("passed string is negative for group: %v, parsed value: %v", i, v)
 		}
