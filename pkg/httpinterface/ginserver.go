@@ -19,7 +19,9 @@ type Config struct {
 
 // HTTPServer is HTTP server wrapper.
 type HTTPServer struct {
-	engine *gin.Engine
+	Config
+	isReady func() bool // for k8s probes
+	engine  *gin.Engine
 }
 
 // NewGinServer creates a new HTTP server

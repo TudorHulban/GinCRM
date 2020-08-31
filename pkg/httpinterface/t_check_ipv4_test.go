@@ -37,3 +37,14 @@ func TestIsIPv4BadValues(t *testing.T) {
 		}
 	})
 }
+
+// BenchmarkIsIPv4-4   	 2461770	       514 ns/op	   1.95 MB/s	      64 B/op	       1 allocs/op
+func BenchmarkIsIPv4(b *testing.B) {
+	b.ReportAllocs()
+	b.SetBytes(1)
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		isIpv4("127.0.0.1")
+	}
+}

@@ -3,13 +3,14 @@ package httpinterface
 import (
 	"testing"
 
+	"github.com/TudorHulban/log"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateConfig(t *testing.T) {
 	const vers = "0.1"
 
-	co, err := CreateConfig("0.0.0.0:80", vers)
+	co, err := CreateConfig("0.0.0.0:80", vers, log.DEBUG)
 
 	assert.Nil(t, err)
 	assert.Equal(t, co.IPV4Address, "0.0.0.0", "testing IPV4")

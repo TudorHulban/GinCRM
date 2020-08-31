@@ -23,6 +23,7 @@ func isIpv4(theIP string) error {
 
 	for i, v := range groups {
 		groupNo, errParse := strconv.Atoi(v)
+
 		if errParse != nil {
 			return errors.WithMessagef(errParse, "passed string conversion fails for group: %v, parsed value: %v", i, v)
 		}
@@ -46,7 +47,7 @@ func isIpv4(theIP string) error {
 // CreateConfig Package Helper for creating Gin configuration.
 // Holds also validators.
 // socket like "0.0.0.0:8080"
-func CreateConfig(socket string, ldVersion string) (*Config, error) {
+func CreateConfig(socket string, ldVersion string, logLevel int) (*Config, error) {
 	// input validation
 	ipv4 := socket[:strings.Index(socket, ":")+1]
 
@@ -65,6 +66,6 @@ func CreateConfig(socket string, ldVersion string) (*Config, error) {
 		IPV4Address:   ipv4,
 		Port:          uint16(port),
 		BinaryVersion: ldVersion,
-		GLogger:       log.New(3, os.Stderr, true),
+		GLogger:       log.New(logLevel, os.Stderr, true),
 	}, nil
 }

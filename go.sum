@@ -1,5 +1,7 @@
 github.com/TudorHulban/log v0.0.0-20200604164431-26ff3c3a9255 h1:kmoQtBd94rWIbl8ZOabP+oTtTHFLG+YZdRSGbhcZJC4=
 github.com/TudorHulban/log v0.0.0-20200604164431-26ff3c3a9255/go.mod h1:ew305nN8YryUTCYmLewSYkDsgLnlhUGMrFxhvastTLI=
+github.com/TudorHulban/log v0.0.0-20200831150322-5cca386c96e5 h1:N+O8kFiUpeC1h/c6hm+qyNHPblNOSl8vpA8B4Cevz0M=
+github.com/TudorHulban/log v0.0.0-20200831150322-5cca386c96e5/go.mod h1:ew305nN8YryUTCYmLewSYkDsgLnlhUGMrFxhvastTLI=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
