@@ -9,7 +9,7 @@ import (
 )
 
 // Route Concentrates information to define a Gin route.
-type Route struct {
+type route struct {
 	Group    string
 	Endpoint string
 	Method   string          // HTTP Method
@@ -17,7 +17,7 @@ type Route struct {
 }
 
 // registerRoute Method adds one route to Gin internal router.
-func (s *HTTPServer) registerRoute(r Route) error {
+func (s *HTTPServer) registerRoute(r route) error {
 	r.Method = strings.ToTitle(r.Method)
 
 	s.GLogger.Debugf("Adding Route: %v, Method: %v", r.Group+r.Endpoint, r.Method)
@@ -38,6 +38,21 @@ func (s *HTTPServer) registerRoute(r Route) error {
 		s.engine.Any(r.Group+r.Endpoint, r.Handler)
 	default:
 		return errors.New("unsupported method: " + r.Method)
+	}
+	return nil
+}
+
+// RegisterRoutes Registers the routes passed.
+func (s *HTTPServer) registerRoutes(routes []route) error {
+	if len(routes) == 0 {
+		return errors.New("no routes to add")
+	}
+	s.GLogger.Debugf("Routes to add: %v", routes)
+
+	for _, route := range routes {
+		if errReg := s.registerRoute(route); errReg != nil {
+			return errReg
+		}
 	}
 	return nil
 }

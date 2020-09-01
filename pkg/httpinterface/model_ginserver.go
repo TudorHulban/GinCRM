@@ -39,6 +39,10 @@ func NewGinServer(cfg Config) *HTTPServer {
 	s.engine.Use(gin.Recovery())
 	s.engine.RedirectTrailingSlash = true
 	s.engine.HandleMethodNotAllowed = false
+
+	// adding routes
+	s.registerRoutes(s.prepareInfraRoutes())
+
 	return s
 }
 
@@ -50,4 +54,9 @@ func (s *HTTPServer) SetAsReady() {
 // SetAsNotReady Setter method for switching to readiness state NOTREADY.
 func (s *HTTPServer) SetAsNotReady() {
 	s.isReady = func() bool { return false }
+}
+
+// GetIfReady Getter method for current readiness state.
+func (s *HTTPServer) GetIfReady() bool {
+	return s.isReady()
 }
