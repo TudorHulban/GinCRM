@@ -20,7 +20,7 @@ type route struct {
 func (s *HTTPServer) registerRoute(r route) error {
 	r.Method = strings.ToTitle(r.Method)
 
-	s.GLogger.Debugf("Adding Route: %v, Method: %v", r.Group+r.Endpoint, r.Method)
+	s.cfg.GLogger.Debugf("Adding Route: %v, Method: %v", r.Group+r.Endpoint, r.Method)
 
 	switch r.Method {
 	case http.MethodGet:
@@ -47,7 +47,7 @@ func (s *HTTPServer) registerRoutes(routes []route) error {
 	if len(routes) == 0 {
 		return errors.New("no routes to add")
 	}
-	s.GLogger.Debugf("Routes to add: %v", routes)
+	s.cfg.GLogger.Debugf("Routes to add: %v", routes)
 
 	for _, route := range routes {
 		if errReg := s.registerRoute(route); errReg != nil {

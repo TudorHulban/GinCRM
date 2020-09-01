@@ -1,6 +1,11 @@
 package httpinterface
 
 import (
+	"context"
+	"fmt"
+	"net/http"
+	"time"
+
 	"github.com/TudorHulban/log"
 	"github.com/gin-gonic/gin"
 )
@@ -19,20 +24,20 @@ type Config struct {
 
 // HTTPServer is HTTP server wrapper.
 type HTTPServer struct {
-	Config
+	cfg     *Config
 	isReady func() bool // for probes
 	engine  *gin.Engine
 }
 
 // NewGinServer creates a new HTTP server.
 // No cfg validation, use create config helper for that.
-func NewGinServer(cfg Config) *HTTPServer {
+func NewGinServer(config *Config) *HTTPServer {
 	s := new(HTTPServer)
 	s.SetAsNotReady()
-	s.Config = cfg
+	s.cfg = config
 
-	if s.GLogger.GetLogLevel() != log.DEBUG {
-		s.GLogger.Info("Setting Gin Log Level to Release Mode")
+	if s.cfg.GLogger.GetLogLevel() != log.DEBUG {
+		s.cfg.GLogger.Info("Setting Gin Log Level to Release Mode")
 		gin.SetMode(gin.ReleaseMode) // to be called before initializing the router!
 	}
 	s.engine = gin.New()
@@ -44,6 +49,28 @@ func NewGinServer(cfg Config) *HTTPServer {
 	s.registerRoutes(s.prepareInfraRoutes())
 
 	return s
+}
+
+// Run Method for starting HTTP Server.
+func (s *HTTPServer) Run(ctx context.Context) error {
+	gracefull := &http.Server{
+		Handler: s.engine,
+		Addr:    fmt.Sprintf("%d:%d", s.cfg.IPV4Address, s.cfg.Port),
+	}
+
+	go func() {
+		<-ctx.Done()
+
+		ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+		defer cancel()
+
+		s.cfg.GLogger.Info("shutting down HTTP Server")
+		if errShutdown := gracefull.Shutdown(ctx); errShutdown != nil {
+			s.cfg.GLogger.Info(errShutdown, "could not gracefully stop http server")
+		}
+	}()
+
+	return gracefull.ListenAndServe()
 }
 
 // SetAsReady Setter method for switching to readiness state READY.

@@ -13,7 +13,7 @@ func (s *HTTPServer) handlerGetIfReady(c *gin.Context) {
 
 // handlerVersion Method returns binary version as injected by repo when created the Gin instance.
 func (s *HTTPServer) handlerVersion(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"version": s.Config.BinaryVersion})
+	c.JSON(http.StatusOK, gin.H{"version": s.cfg.BinaryVersion})
 }
 
 // prepareInfraRoutes Method helps with route preparation.

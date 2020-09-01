@@ -3,26 +3,29 @@ package main
 import (
 	"log"
 
+	"github.com/TudorHulban/GinCRM/pkg/httpinterface"
 	"github.com/TudorHulban/GinCRM/pkg/ostop"
-	"github.com/docker/docker/daemon/config"
+	tlog "github.com/TudorHulban/log"
+	"github.com/pkg/errors"
 	"golang.org/x/sync/errgroup"
 )
 
 func main() {
-	// creating an error group to keep dependencies in sync, only Gin dependency now though.g.Go(func() error {
-			return httpinterface.NewHTTPServer(address).Run(ctx, rtbrick.RTBrick{Cfg: config.New()})
-		})
-
 	ctx, cancel := ostop.NewOSCancellableCtx()
 	defer cancel()
 
+	// creating an error group to keep dependencies in sync, only Gin dependency now though.
 	g, ctx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
-		return (address).Run(ctx, rtbrick.RTBrick{Cfg: config.New()})
+		cfg, errConfig := httpinterface.CreateConfig("0.0.0.0:8080", "0.1", tlog.DEBUG)
+		if errConfig != nil {
+			return errors.WithMessage(errConfig, "errors creating HTTP Server configuration")
+		}
+		return httpinterface.NewGinServer(cfg).Run(ctx)
 	})
 
-	if err := g.Wait(); err != nil {
-		log.Fatal(err, "runtime error")
+	if errWait := g.Wait(); errWait != nil {
+		log.Fatal(errWait, "runtime error")
 	}
 }

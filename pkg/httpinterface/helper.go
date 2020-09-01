@@ -10,6 +10,32 @@ import (
 	"github.com/pkg/errors"
 )
 
+// CreateConfig Package Helper for creating Gin configuration.
+// Holds also validators.
+// socket like "0.0.0.0:8080"
+func CreateConfig(socket string, ldVersion string, logLevel int) (*Config, error) {
+	// input validation
+	ipv4 := socket[:strings.Index(socket, ":")+1]
+
+	// check is IPV4
+	errParseIP := isIpv4(ipv4)
+	if errParseIP != nil {
+		return nil, errors.WithMessage(errParseIP, "provided Gin listening port could not be parsed")
+	}
+
+	port, errParsePort := strconv.Atoi(socket[strings.Index(socket, ":")+1:])
+	if errParsePort != nil {
+		return nil, errors.WithMessage(errParsePort, "provided Gin listening port could not be parsed")
+	}
+
+	return &Config{
+		IPV4Address:   ipv4,
+		Port:          uint16(port),
+		BinaryVersion: ldVersion,
+		GLogger:       log.New(logLevel, os.Stderr, true),
+	}, nil
+}
+
 // isIpv4 takes string as "192.168.1.8" and checks if IPv4
 func isIpv4(theIP string) error {
 	if len(theIP) == 0 {
@@ -42,30 +68,4 @@ func isIpv4(theIP string) error {
 	}
 
 	return nil
-}
-
-// CreateConfig Package Helper for creating Gin configuration.
-// Holds also validators.
-// socket like "0.0.0.0:8080"
-func CreateConfig(socket string, ldVersion string, logLevel int) (*Config, error) {
-	// input validation
-	ipv4 := socket[:strings.Index(socket, ":")+1]
-
-	// check is IPV4
-	errParseIP := isIpv4(ipv4)
-	if errParseIP != nil {
-		return nil, errors.WithMessage(errParseIP, "provided Gin listening port could not be parsed")
-	}
-
-	port, errParsePort := strconv.Atoi(socket[strings.Index(socket, ":")+1:])
-	if errParsePort != nil {
-		return nil, errors.WithMessage(errParsePort, "provided Gin listening port could not be parsed")
-	}
-
-	return &Config{
-		IPV4Address:   ipv4,
-		Port:          uint16(port),
-		BinaryVersion: ldVersion,
-		GLogger:       log.New(logLevel, os.Stderr, true),
-	}, nil
 }
