@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/TudorHulban/GinCRM/pkg/httpinterface"
 	"github.com/TudorHulban/GinCRM/pkg/ostop"
@@ -18,7 +19,7 @@ func main() {
 	g, ctx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
-		cfg, errConfig := httpinterface.CreateConfig("0.0.0.0:8080", "0.1", tlog.DEBUG)
+		cfg, errConfig := httpinterface.CreateConfig("0.0.0.0:8080", "0.1", tlog.DEBUG, 3)
 		if errConfig != nil {
 			return errors.WithMessage(errConfig, "errors creating HTTP Server configuration")
 		}
@@ -26,6 +27,7 @@ func main() {
 	})
 
 	if errWait := g.Wait(); errWait != nil {
-		log.Fatal(errWait, "runtime error")
+		log.Println("Error group runtime error: ", errWait)
+		os.Exit(ostop.RUNTIME)
 	}
 }

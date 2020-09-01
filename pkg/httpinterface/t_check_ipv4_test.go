@@ -10,6 +10,7 @@ func TestIsIPv4GoodValues(t *testing.T) {
 	var testCases = []struct {
 		passedValue string
 	}{
+		{"0.0.0.0"},
 		{"1.1.1.1"},
 		{"127.0.0.1"},
 	}

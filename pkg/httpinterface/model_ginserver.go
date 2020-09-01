@@ -4,14 +4,20 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/TudorHulban/log"
 	"github.com/gin-gonic/gin"
+	"github.com/pkg/errors"
 )
 
 // Config Concentrates attributes for starting a Gin server.
 type Config struct {
+	// for busy servers graceful shutdown period
+	GracefulSecs uint8
 	// IPV4 to run
 	IPV4Address string
 	// port to run
@@ -20,6 +26,33 @@ type Config struct {
 	BinaryVersion string
 	// logger to use with Gin
 	GLogger *log.LogInfo
+}
+
+// CreateConfig Package Helper for creating Gin configuration.
+// Holds also validators.
+// socket like "0.0.0.0:8080"
+func CreateConfig(socket string, ldVersion string, logLevel int, graceSeconds uint8) (*Config, error) {
+	// input validation
+	ipv4 := socket[:strings.Index(socket, ":")]
+
+	// check is IPV4
+	errParseIP := isIpv4(ipv4)
+	if errParseIP != nil {
+		return nil, errors.WithMessage(errParseIP, "provided Gin listening port could not be parsed")
+	}
+
+	port, errParsePort := strconv.Atoi(socket[strings.Index(socket, ":")+1:])
+	if errParsePort != nil {
+		return nil, errors.WithMessage(errParsePort, "provided Gin listening port could not be parsed")
+	}
+
+	return &Config{
+		GracefulSecs:  graceSeconds,
+		IPV4Address:   ipv4,
+		Port:          uint16(port),
+		BinaryVersion: ldVersion,
+		GLogger:       log.New(logLevel, os.Stderr, true),
+	}, nil
 }
 
 // HTTPServer is HTTP server wrapper.
@@ -55,13 +88,13 @@ func NewGinServer(config *Config) *HTTPServer {
 func (s *HTTPServer) Run(ctx context.Context) error {
 	gracefull := &http.Server{
 		Handler: s.engine,
-		Addr:    fmt.Sprintf("%d:%d", s.cfg.IPV4Address, s.cfg.Port),
+		Addr:    fmt.Sprintf("%s:%d", s.cfg.IPV4Address, s.cfg.Port),
 	}
 
 	go func() {
 		<-ctx.Done()
 
-		ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+		ctx, cancel := context.WithTimeout(ctx, time.Duration(int64(s.cfg.GracefulSecs))*time.Second)
 		defer cancel()
 
 		s.cfg.GLogger.Info("shutting down HTTP Server")
@@ -70,6 +103,7 @@ func (s *HTTPServer) Run(ctx context.Context) error {
 		}
 	}()
 
+	s.cfg.GLogger.Infof("starting HTTP Server on port: %v", s.cfg.Port)
 	return gracefull.ListenAndServe()
 }
 

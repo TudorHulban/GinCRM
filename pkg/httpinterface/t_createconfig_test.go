@@ -10,7 +10,7 @@ import (
 func TestCreateConfig(t *testing.T) {
 	const vers = "0.1"
 
-	co, err := CreateConfig("0.0.0.0:80", vers, log.DEBUG)
+	co, err := CreateConfig("0.0.0.0:80", vers, log.DEBUG, 3)
 
 	assert.Nil(t, err)
 	assert.Equal(t, co.IPV4Address, "0.0.0.0", "testing IPV4")

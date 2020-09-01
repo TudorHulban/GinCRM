@@ -1,4 +1,4 @@
 /*
-Package ostop Provides cancellable on OS signal context.
+Package ostop Provides objects related to OS signal cancellations.
 */
 package ostop
