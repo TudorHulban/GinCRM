@@ -1,17 +1,24 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
 	"github.com/TudorHulban/GinCRM/pkg/httpinterface"
 	"github.com/TudorHulban/GinCRM/pkg/ostop"
+	"github.com/TudorHulban/GinCRM/pkg/vers"
 	tlog "github.com/TudorHulban/log"
 	"github.com/pkg/errors"
 	"golang.org/x/sync/errgroup"
 )
 
 func main() {
+	if len(os.Args) == 2 && os.Args[1] == "version" {
+		fmt.Println(vers.Version) // fmt used instead of log for nicer output.
+		os.Exit(0)
+	}
+
 	ctx, cancel := ostop.NewOSCancellableCtx()
 	defer cancel()
 

@@ -16,32 +16,26 @@ func isIpv4(theIP string) error {
 
 	groups := strings.Split(theIP, ".")
 	if len(groups) != 4 {
-		return errors.New("passed string for conversion is malformed")
+		return fmt.Errorf("passed string: %v is malformed", theIP)
 	}
 
 	for i, v := range groups {
 		groupNo, errParse := strconv.Atoi(v)
 
 		if errParse != nil {
-			return errors.WithMessagef(errParse, "passed string conversion fails for group: %v, parsed value: %v", i, v)
+			return errors.WithMessagef(errParse, "passed string: %v conversion fails for group: %v, parsed value: %v", theIP, i, v)
 		}
 
-		/*
-
-		   if i == 0 && groupNo == 0 {
-		   			if theIP != "0.0.0.0" {
-		   				return fmt.Errorf("passed string starts with zero in group: %v, parsed value: %v", i, v)
-		   			}
-		   		}
-
-		*/
+		if i == 0 && groupNo == 0 && theIP != "0.0.0.0" {
+			return fmt.Errorf("passed string: %v starts with zero in group: %v, parsed value: %v", theIP, i, v)
+		}
 
 		if groupNo < 0 {
-			return fmt.Errorf("passed string is negative for group: %v, parsed value: %v", i, v)
+			return fmt.Errorf("passed string: %v is negative for group: %v, parsed value: %v", theIP, i, v)
 		}
 
 		if groupNo > 256 {
-			return fmt.Errorf("passed string is greater than 256 for group: %v, parsed value: %v", i, v)
+			return fmt.Errorf("passed string: %v is greater than 256 for group: %v, parsed value: %v", theIP, i, v)
 		}
 	}
 
