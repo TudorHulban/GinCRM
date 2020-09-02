@@ -80,6 +80,7 @@ func NewGinServer(config *Config) *HTTPServer {
 
 	// adding routes
 	s.registerRoutes(s.prepareInfraRoutes())
+	s.registerRoutes(s.prepareLoginRoute())
 
 	return s
 }

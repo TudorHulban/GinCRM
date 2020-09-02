@@ -22,14 +22,14 @@ func (s *HTTPServer) prepareInfraRoutes() []route {
 	routeIsReady := route{
 		Group:    endPointGroupInfrastructure,
 		Endpoint: endpointIsReady,
-		Method:   "GET",
+		Method:   http.MethodGet,
 		Handler:  s.handlerGetIfReady,
 	}
 
 	routeVersion := route{
 		Group:    endPointGroupInfrastructure,
 		Endpoint: endpointVersion,
-		Method:   "GET",
+		Method:   http.MethodGet,
 		Handler:  s.handlerVersion,
 	}
 
