@@ -23,6 +23,10 @@ func (s *HTTPServer) handlerLogin(c *gin.Context) {
 	}
 
 	s.cfg.GLogger.Debug("Form Data:", formData)
+
+	// check if authorized. if authorized return session ID.
+	// in backend insert in session cache the user structure and in user cache the credentials.
+
 	c.JSON(http.StatusOK, formData)
 }
 
