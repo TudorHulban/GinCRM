@@ -3,8 +3,8 @@ package httpinterface
 import (
 	"net/http"
 
+	"github.com/TudorHulban/GinCRM/pkg/validator"
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 )
 
 // FormLogin Structure used for validating login request.
@@ -15,12 +15,14 @@ type FormLogin struct {
 
 func (s *HTTPServer) handlerLogin(c *gin.Context) {
 	var formData FormLogin
+	c.Bind(&formData) // curl -X POST -F "usercode=john" -F "password=1234" http://localhost:8080/auth/login
 
-	if err := c.ShouldBindWith(&formData, binding.Query); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	if errData := validator.GetValidator().Struct(formData); errData != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": errData.Error()})
 	}
 
 	s.cfg.GLogger.Debug("Form Data:", formData)
+	c.JSON(http.StatusOK, formData)
 }
 
 // prepareInfraRoutes Method helps with route preparation.
