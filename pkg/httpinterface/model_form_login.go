@@ -9,8 +9,8 @@ import (
 
 // FormLogin Structure used for validating login request.
 type FormLogin struct {
-	FieldUserCode string `form:"usercode"`
-	FieldPassword string `form:"password"`
+	FieldUserCode string `form:"usercode" validate:"required"`
+	FieldPassword string `form:"password" validate:"required"`
 }
 
 func (s *HTTPServer) handlerLogin(c *gin.Context) {
@@ -19,6 +19,7 @@ func (s *HTTPServer) handlerLogin(c *gin.Context) {
 
 	if errData := validator.GetValidator().Struct(formData); errData != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": errData.Error()})
+		return
 	}
 
 	s.cfg.GLogger.Debug("Form Data:", formData)
