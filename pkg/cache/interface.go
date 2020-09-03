@@ -1,17 +1,13 @@
 package cache
 
-// KV is key value for the NoSQL DB.
-type KV struct {
-	key   []byte
-	value []byte
-}
+import "github.com/TudorHulban/badgerwrap"
 
 // IKV is the interface proposed for interacting with a key value based cache.
 type IKV interface {
 	// Inserts or updates KV in store.
-	Set(KV) error
+	Set(badgerwrap.KV) error
 	// Inserts or updates KV in store. Time To Live in seconds.
-	SetTTL(KV, uint) error
+	SetTTL(badgerwrap.KV, uint) error
 	// Inserts or updates KV in store. Value is to be serialized structure.
 	SetAny([]byte, interface{}) error
 	// Inserts or updates KV in store. Value is to be serialized structure.
@@ -22,7 +18,7 @@ type IKV interface {
 	GetAnyByK([]byte, interface{}) error
 	// Returns a slice of KV if prefix found.
 	// If not found it returns empty slice.
-	GetKVByPrefix([]byte) ([]KV, error)
+	GetKVByPrefix([]byte) ([]badgerwrap.KV, error)
 	// Deletes KV bassed on key.
 	DeleteKVByK([]byte) error
 	// Close closes the opened KV store.
