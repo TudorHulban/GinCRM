@@ -1,4 +1,4 @@
-package autentication
+package authentication
 
 import (
 	"github.com/TudorHulban/GinCRM/pkg/cache/cachelogin"
@@ -21,13 +21,13 @@ func (u UserAuth) SaveToCache() error {
 }
 
 // IsAuthenticated Method checks if credentials match the cache.
-func (u UserAuth) IsAuthenticated(usercode, password string) error {
-	pass, errGet := cachelogin.GetCache().GetVByK([]byte(usercode))
+func (u UserAuth) IsAuthenticated() error {
+	pass, errGet := cachelogin.GetCache().GetVByK([]byte(u.Code))
 	if errGet != nil {
 		return errors.WithMessage(errGet, "error when checking login cache")
 	}
 
-	if password != string(pass) {
+	if u.Password != string(pass) {
 		return errors.New("password does not match login cache one")
 	}
 

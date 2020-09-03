@@ -1,1 +1,1 @@
-package autentication
+package authentication

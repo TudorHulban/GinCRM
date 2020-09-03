@@ -85,6 +85,9 @@ func NewGinServer(config *Config) (*HTTPServer, error) {
 	if errRoLog := s.registerRoutes(s.prepareLoginRoute()); errRoLog != nil {
 		return nil, errors.WithMessage(errRoLog, "could not prepare login routes")
 	}
+	if errRoCreateUser := s.registerRoutes(s.prepareCreateUserRoute()); errRoCreateUser != nil {
+		return nil, errors.WithMessage(errRoCreateUser, "could not prepare create user routes")
+	}
 
 	return s, nil
 }

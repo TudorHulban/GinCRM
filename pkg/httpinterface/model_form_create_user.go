@@ -8,15 +8,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// FormLogin Structure used for validating login request.
-type FormLogin struct {
+// FormCreateUser Structure used for creating user.
+type FormCreateUser struct {
 	FieldUserCode string `form:"usercode" validate:"required"`
 	FieldPassword string `form:"password" validate:"required"`
 }
 
-func (s *HTTPServer) handlerLogin(c *gin.Context) {
-	var formData FormLogin
-	// curl -X POST -F "usercode=john" -F "password=1234" http://localhost:8080/auth/login
+func (s *HTTPServer) handlerCreateUser(c *gin.Context) {
+	var formData FormCreateUser
+
+	// curl -X POST -F "usercode=john" -F "password=1234" http://localhost:8080/auth/createuser
 	if errBind := c.Bind(&formData); errBind != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": errBind.Error()})
 		return
@@ -27,16 +28,14 @@ func (s *HTTPServer) handlerLogin(c *gin.Context) {
 		return
 	}
 
-	s.cfg.GLogger.Debug("Form Data:", formData)
-
-	// check if authorized. if authorized return session ID.
-	// in backend insert in session cache the user structure and in user cache the credentials.
+	// create user in cache
 	u := authentication.UserAuth{
 		Code:     formData.FieldUserCode,
 		Password: formData.FieldPassword,
 	}
-	if errAuthenticate := u.IsAuthenticated(); errAuthenticate != nil {
-		c.AbortWithStatus(http.StatusUnauthorized)
+
+	if errCreateCache := u.SaveToCache(); errCreateCache != nil {
+		c.AbortWithError(http.StatusInternalServerError, errCreateCache)
 		return
 	}
 
@@ -45,12 +44,12 @@ func (s *HTTPServer) handlerLogin(c *gin.Context) {
 
 // prepareLoginRoute Method helps with route preparation.
 // Routes need to contain the starting slash ex. /route.
-func (s *HTTPServer) prepareLoginRoute() []route {
+func (s *HTTPServer) prepareCreateUserRoute() []route {
 	routeLogin := route{
 		Group:    endPointGroupAuthorization,
-		Endpoint: endPointLogin,
+		Endpoint: endPointCreateUser,
 		Method:   http.MethodPost,
-		Handler:  s.handlerLogin,
+		Handler:  s.handlerCreateUser,
 	}
 
 	return []route{routeLogin}

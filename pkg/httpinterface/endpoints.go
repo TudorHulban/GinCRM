@@ -13,6 +13,7 @@ const (
 const (
 	// endPointGroupAuthorization concentrates routes for authorization scenarios.
 	endPointGroupAuthorization = "/auth"
-	// endpointLogin is endpoint for login.
-	endpointLogin = "/login"
+	// endPointLogin is endpoint for login.
+	endPointLogin      = "/login"
+	endPointCreateUser = "/createuser"
 )
