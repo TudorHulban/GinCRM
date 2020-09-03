@@ -1,4 +1,4 @@
-package cachesessionid
+package cachelogin
 
 import (
 	"os"

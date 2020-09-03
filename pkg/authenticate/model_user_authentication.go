@@ -27,11 +27,14 @@ func (u UserAuth) IsAuthenticated(usercode, password string) error {
 		return errors.WithMessage(errGet, "error when checking login cache")
 	}
 
-	if pass != []byte(password) {
+	if password != string(pass) {
 		return errors.New("password does not match login cache one")
 	}
+
+	return nil
 }
 
+// DeleteFromCache Method deletes credentials from login cache.
 func (u UserAuth) DeleteFromCache(usercode string) error {
 	return cachelogin.GetCache().DeleteKVByK([]byte(usercode))
 }

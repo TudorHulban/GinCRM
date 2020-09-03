@@ -1,4 +1,4 @@
 /*
-Package sessioncache provides means to store HTTP session IDs in an interface.
+Package cache provides objects for caching operations..
 */
 package cache
