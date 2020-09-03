@@ -6,7 +6,7 @@ type KV struct {
 	value []byte
 }
 
-// IKVCache is the interface proposed for interacting with a key value based cache.
+// IKV is the interface proposed for interacting with a key value based cache.
 type IKV interface {
 	// Inserts or updates KV in store.
 	Set(KV) error

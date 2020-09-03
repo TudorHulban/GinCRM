@@ -64,7 +64,7 @@ type HTTPServer struct {
 
 // NewGinServer creates a new HTTP server.
 // No cfg validation, use create config helper for that.
-func NewGinServer(config *Config) *HTTPServer {
+func NewGinServer(config *Config) (*HTTPServer, error) {
 	s := new(HTTPServer)
 	s.SetAsNotReady()
 	s.cfg = config
@@ -79,10 +79,14 @@ func NewGinServer(config *Config) *HTTPServer {
 	s.engine.HandleMethodNotAllowed = false
 
 	// adding routes
-	s.registerRoutes(s.prepareInfraRoutes())
-	s.registerRoutes(s.prepareLoginRoute())
+	if errRoInfra := s.registerRoutes(s.prepareInfraRoutes()); errRoInfra != nil {
+		return nil, errors.WithMessage(errRoInfra, "could not prepare infrastructure routes")
+	}
+	if errRoLog := s.registerRoutes(s.prepareLoginRoute()); errRoLog != nil {
+		return nil, errors.WithMessage(errRoLog, "could not prepare login routes")
+	}
 
-	return s
+	return s, nil
 }
 
 // Run Method for starting HTTP Server.

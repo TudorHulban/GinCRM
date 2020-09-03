@@ -30,7 +30,11 @@ func main() {
 		if errConfig != nil {
 			return errors.WithMessage(errConfig, "errors creating HTTP Server configuration")
 		}
-		return httpinterface.NewGinServer(cfg).Run(ctx)
+		gin, errCo := httpinterface.NewGinServer(cfg)
+		if errCo != nil {
+			return errors.WithMessage(errCo, "could not create HTTP Server instance")
+		}
+		return gin.Run(ctx)
 	})
 
 	if errWait := g.Wait(); errWait != nil {

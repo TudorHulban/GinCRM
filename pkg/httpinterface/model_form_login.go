@@ -15,10 +15,14 @@ type FormLogin struct {
 
 func (s *HTTPServer) handlerLogin(c *gin.Context) {
 	var formData FormLogin
-	c.Bind(&formData) // curl -X POST -F "usercode=john" -F "password=1234" http://localhost:8080/auth/login
+	// curl -X POST -F "usercode=john" -F "password=1234" http://localhost:8080/auth/login
+	if errBind := c.Bind(&formData); errBind != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": errBind.Error()})
+		return
+	}
 
-	if errData := validator.GetValidator().Struct(formData); errData != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": errData.Error()})
+	if errValid := validator.GetValidator().Struct(formData); errValid != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": errValid.Error()})
 		return
 	}
 
