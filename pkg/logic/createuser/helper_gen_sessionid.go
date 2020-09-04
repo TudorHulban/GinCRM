@@ -1,4 +1,4 @@
-package authentication
+package createuser
 
 import (
 	"math/rand"

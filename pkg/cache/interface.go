@@ -8,7 +8,8 @@ type IKV interface {
 	Set(badgerwrap.KV) error
 	// Inserts or updates KV in store. Time To Live in seconds.
 	SetTTL(badgerwrap.KV, uint) error
-	// Inserts or updates KV in store. Value is to be serialized structure.
+	// Inserts or updates KV in store.
+	// Key is byte slice, value is to be serialized structure.
 	SetAny([]byte, interface{}) error
 	// Inserts or updates KV in store. Value is to be serialized structure.
 	SetAnyTTL([]byte, interface{}, uint) error
