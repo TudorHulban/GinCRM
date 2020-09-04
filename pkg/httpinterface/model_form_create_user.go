@@ -13,6 +13,11 @@ type FormCreateUser struct {
 	FieldPassword string `form:"password" validate:"required"`
 }
 
+// ResponseCreateUser Structure used to respond to a create user request.
+type ResponseCreateUser struct {
+	SessionID string `json:"sessionID`
+}
+
 // Verify with:
 // curl -X POST -F "usercode=john" -F "password=1234" http://localhost:8080/auth/createuser
 func (s *HTTPServer) handlerCreateUser(c *gin.Context) {
@@ -33,7 +38,9 @@ func (s *HTTPServer) handlerCreateUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, formData)
+	c.JSON(http.StatusOK, ResponseCreateUser{
+		SessionID: "",
+	})
 }
 
 // prepareLoginRoute Method helps with route preparation.
