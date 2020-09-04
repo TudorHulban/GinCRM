@@ -12,8 +12,15 @@ type UserAuth struct {
 	Password string
 }
 
-// SaveToCache Method saves user to login cache.
-func (u UserAuth) SaveToCache() error {
+// UserSessionInfo Concentrates info for when retrieving user info bassed on passed session ID.
+type UserSessionInfo struct {
+	UserID          int64 // Primary key as per user table.
+	Code            string
+	PermissionRoles []uint // A security profile is a list of roles.
+}
+
+// SaveToLoginCache Method saves user to login cache.
+func (u UserAuth) SaveToLoginCache() error {
 	return cachelogin.GetCache().Set(badgerwrap.KV{
 		Key:   []byte(u.Code),
 		Value: []byte(u.Password),

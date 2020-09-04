@@ -3,7 +3,7 @@ package httpinterface
 import (
 	"net/http"
 
-	authentication "github.com/TudorHulban/GinCRM/pkg/authenticate"
+	authentication "github.com/TudorHulban/GinCRM/pkg/logic/authenticate"
 	"github.com/gin-gonic/gin"
 )
 

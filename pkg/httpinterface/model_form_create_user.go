@@ -3,7 +3,7 @@ package httpinterface
 import (
 	"net/http"
 
-	authentication "github.com/TudorHulban/GinCRM/pkg/authenticate"
+	authentication "github.com/TudorHulban/GinCRM/pkg/logic/authenticate"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,7 +28,7 @@ func (s *HTTPServer) handlerCreateUser(c *gin.Context) {
 		Password: formData.FieldPassword,
 	}
 
-	if errCreateCache := u.SaveToCache(); errCreateCache != nil {
+	if errCreateCache := u.SaveToLoginCache(); errCreateCache != nil {
 		c.AbortWithError(http.StatusInternalServerError, errCreateCache)
 		return
 	}
