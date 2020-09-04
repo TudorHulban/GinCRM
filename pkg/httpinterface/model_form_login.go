@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	authentication "github.com/TudorHulban/GinCRM/pkg/authenticate"
-	"github.com/TudorHulban/GinCRM/pkg/validator"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,16 +13,12 @@ type FormLogin struct {
 	FieldPassword string `form:"password" validate:"required"`
 }
 
+// Verify with:
+// curl -X POST -F "usercode=john" -F "password=1234" http://localhost:8080/auth/login
 func (s *HTTPServer) handlerLogin(c *gin.Context) {
-	var formData FormLogin
-	// curl -X POST -F "usercode=john" -F "password=1234" http://localhost:8080/auth/login
-	if errBind := c.Bind(&formData); errBind != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": errBind.Error()})
-		return
-	}
+	formData := new(FormLogin)
 
-	if errValid := validator.GetValidator().Struct(formData); errValid != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": errValid.Error()})
+	if errValid := BindAndValidate(formData, c); errValid != nil {
 		return
 	}
 
