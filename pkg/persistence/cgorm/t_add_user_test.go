@@ -16,5 +16,6 @@ func TestAddUser(t *testing.T) {
 		UserCode:        "abcd",
 	}
 
+	assert.Nil(t, cgorm.MigrateDBSchema())
 	assert.Nil(t, userCRUD.AddUser(&data))
 }

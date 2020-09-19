@@ -1,11 +1,14 @@
 package persistence
 
+import "gorm.io/gorm"
+
 /*
 File contains structures needed for user management.
 */
 
 // UserAuth Consolidates data referring to user authentication.
 type UserAuth struct {
+	gorm.Model
 	ID              uint64 `gorm:"primaryKey"` // user ID, primary key
 	SecurityGroupID uint8  // security group ID
 	CreatedAt       uint64 `gorm:"autoCreateTime"` // UNIX time for creation time
