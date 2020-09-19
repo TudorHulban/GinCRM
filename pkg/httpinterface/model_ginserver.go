@@ -107,7 +107,7 @@ func (s *HTTPServer) Run(ctx context.Context) error {
 
 		s.cfg.GLogger.Info("shutting down HTTP Server")
 		if errShutdown := gracefull.Shutdown(ctx); errShutdown != nil {
-			s.cfg.GLogger.Info(errShutdown, "could not gracefully stop http server")
+			s.cfg.GLogger.Info(errShutdown, " - ", "could not gracefully stop HTTP server")
 		}
 	}()
 

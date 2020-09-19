@@ -7,6 +7,9 @@ During the user creation process the cache is updated accordingly.
 
 import (
 	"net/http"
+	"strconv"
+
+	"github.com/TudorHulban/GinCRM/pkg/persistence"
 
 	authentication "github.com/TudorHulban/GinCRM/pkg/logic/authenticate"
 	"github.com/gin-gonic/gin"
@@ -20,7 +23,7 @@ type FormCreateUser struct {
 
 // ResponseCreateUser Structure used to respond to a create user request.
 type ResponseCreateUser struct {
-	SessionID string `json:"sessionID"`
+	UserID string `json:"userID"`
 }
 
 // Verify with:
@@ -28,26 +31,36 @@ type ResponseCreateUser struct {
 func (s *HTTPServer) handlerCreateUser(c *gin.Context) {
 	var formData FormCreateUser
 
-	if errValid := BindAndValidate(formData, c); errValid != nil {
+	/* if errValid := BindAndValidate(formData, c); errValid != nil {
+		return
+	} */
+
+	// create user in RDBMS
+	var p persistence.IUserCRUD
+	u := persistence.UserAuth{
+		SecurityGroupID:   1,
+		UserCode:          formData.FieldUserCode,
+		PasswordLoginForm: formData.FieldPassword,
+	}
+
+	if errCreate := p.AddUser(&u); errCreate != nil {
+		c.AbortWithError(http.StatusInternalServerError, errCreate)
 		return
 	}
 
-	// create user in RDBMS
-	// TODO: add logic.
-
 	// create user in cache
-	u := authentication.UserAuth{
+	cache := authentication.UserAuth{
 		Code:     formData.FieldUserCode,
 		Password: formData.FieldPassword,
 	}
 
-	if errCreateCache := u.SaveToLoginCache(); errCreateCache != nil {
+	if errCreateCache := cache.SaveToLoginCache(); errCreateCache != nil {
 		c.AbortWithError(http.StatusInternalServerError, errCreateCache)
 		return
 	}
 
 	c.JSON(http.StatusOK, ResponseCreateUser{
-		SessionID: "",
+		UserID: strconv.FormatUint(u.ID, 10),
 	})
 }
 

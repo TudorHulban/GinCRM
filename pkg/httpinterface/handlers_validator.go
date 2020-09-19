@@ -8,6 +8,7 @@ import (
 )
 
 // BindAndValidate Helper takes a pointer and Gin context.
+// Returns response to request!
 func BindAndValidate(formData interface{}, c *gin.Context) error {
 	if errBind := c.Bind(formData); errBind != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": errBind.Error()})
