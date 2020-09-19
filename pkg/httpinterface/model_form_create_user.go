@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/TudorHulban/GinCRM/pkg/persistence/cgorm"
+
 	"github.com/TudorHulban/GinCRM/pkg/persistence"
 
 	authentication "github.com/TudorHulban/GinCRM/pkg/logic/authenticate"
@@ -31,17 +33,24 @@ type ResponseCreateUser struct {
 func (s *HTTPServer) handlerCreateUser(c *gin.Context) {
 	var formData FormCreateUser
 
-	/* if errValid := BindAndValidate(formData, c); errValid != nil {
+	s.cfg.GLogger.Info("add user")
+
+	if errValid := BindAndValidate(&formData, c); errValid != nil {
 		return
-	} */
+	}
+
+	s.cfg.GLogger.Info("passed input validation")
 
 	// create user in RDBMS
-	var p persistence.IUserCRUD
+	p := cgorm.NewUser(s.cfg.GLogger) // can be changed for different persistance methods, should be moved in HTTP server constructor
+
 	u := persistence.UserAuth{
 		SecurityGroupID:   1,
 		UserCode:          formData.FieldUserCode,
 		PasswordLoginForm: formData.FieldPassword,
 	}
+
+	s.cfg.GLogger.Info("form data:", formData)
 
 	if errCreate := p.AddUser(&u); errCreate != nil {
 		c.AbortWithError(http.StatusInternalServerError, errCreate)

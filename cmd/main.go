@@ -7,6 +7,7 @@ import (
 
 	"github.com/TudorHulban/GinCRM/pkg/httpinterface"
 	"github.com/TudorHulban/GinCRM/pkg/ostop"
+	"github.com/TudorHulban/GinCRM/pkg/persistence/cgorm"
 	"github.com/TudorHulban/GinCRM/pkg/vers"
 	tlog "github.com/TudorHulban/log"
 	"github.com/pkg/errors"
@@ -25,6 +26,12 @@ func main() {
 	// creating an error group to keep dependencies in sync, only Gin dependency now though.
 	g, ctx := errgroup.WithContext(ctx)
 
+	// creating RDBMS schema
+	g.Go(func() error {
+		return cgorm.MigrateDBSchema()
+	})
+
+	// creating HTTP layer
 	g.Go(func() error {
 		cfg, errConfig := httpinterface.CreateConfig("0.0.0.0:8080", "0.1", tlog.DEBUG, 3)
 		if errConfig != nil {
