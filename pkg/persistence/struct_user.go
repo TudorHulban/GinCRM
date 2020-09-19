@@ -1,22 +1,20 @@
 package persistence
 
-import "gorm.io/gorm"
-
 /*
 File contains structures needed for user management.
 */
 
 // UserAuth Consolidates data referring to user authentication.
 type UserAuth struct {
-	gorm.Model
-	ID              uint64 `gorm:"primaryKey"` // user ID, primary key
-	SecurityGroupID uint8  // security group ID
-	CreatedAt       uint64 `gorm:"autoCreateTime"` // UNIX time for creation time
-	LastLoginAt     uint64 // UNIX time for last login
-	LastUpdateAt    uint64 // UNIX time for last update
-	UserCode        string // user code, used for login
-	PasswordSALT    string // should not be sent in JSON, exported for ORM
-	PasswordHASH    string // should not be sent in JSON, exported for ORM
+	ID                uint64 `gorm:"primaryKey"`                // user ID, primary key
+	SecurityGroupID   uint8  `validate:"required" gorm:"index"` // security group ID
+	CreatedAt         int64  // UNIX time for creation time
+	LastLoginAt       int64  // UNIX time for last login
+	LastUpdateAt      int64  // UNIX time for last update
+	UserCode          string `validate:"required"` // user code, used for login
+	PasswordLoginForm string // password coming from login form
+	PasswordSALT      string // should not be sent in JSON, exported for ORM
+	PasswordHASH      string // should not be sent in JSON, exported for ORM
 
 }
 
