@@ -1,5 +1,10 @@
 package httpinterface
 
+/*
+Create user handler.
+During the user creation process the cache is updated accordingly.
+*/
+
 import (
 	"net/http"
 
@@ -15,7 +20,7 @@ type FormCreateUser struct {
 
 // ResponseCreateUser Structure used to respond to a create user request.
 type ResponseCreateUser struct {
-	SessionID string `json:"sessionID`
+	SessionID string `json:"sessionID"`
 }
 
 // Verify with:
@@ -26,6 +31,9 @@ func (s *HTTPServer) handlerCreateUser(c *gin.Context) {
 	if errValid := BindAndValidate(formData, c); errValid != nil {
 		return
 	}
+
+	// create user in RDBMS
+	// TODO: add logic.
 
 	// create user in cache
 	u := authentication.UserAuth{
