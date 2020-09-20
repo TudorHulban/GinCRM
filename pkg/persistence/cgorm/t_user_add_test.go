@@ -14,7 +14,7 @@ import (
 )
 
 func TestAddUser(t *testing.T) {
-	setup.CleanerRDBMS()
+	setup.CleanRDBMS()
 	require.Nil(t, cgorm.MigrateDBSchema())
 
 	tt := []struct {

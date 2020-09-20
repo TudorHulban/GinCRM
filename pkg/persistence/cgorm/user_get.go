@@ -8,7 +8,7 @@ import (
 
 // GetUserByCredentials Fetches user by credentials.
 func (u *User) GetUserByCredentials(userCode, password string) (*persistence.User, error) {
-	u.l.Debug("Fetching user data by credentials:", userCode, password)
+	u.l.Debugf("Fetching user data by credential user:%v, password:%v", userCode, password)
 
 	var fetchedUserData persistence.User
 	res := persistenceconn.GetRDBMSConn().Where(&persistence.User{UserCode: userCode}).First(&fetchedUserData)
@@ -18,6 +18,7 @@ func (u *User) GetUserByCredentials(userCode, password string) (*persistence.Use
 
 	// compare hashed password
 	if password != fetchedUserData.PasswordHASH {
+		u.l.Debugf("Failed authentication, password:%v, compared with: %v", password, fetchedUserData.PasswordHASH)
 		return nil, authentication.ErrorUnknownCredentials
 	}
 

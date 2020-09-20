@@ -3,7 +3,7 @@ package httpinterface
 import (
 	"net/http"
 
-	authentication "github.com/TudorHulban/GinCRM/pkg/logic/authenticate"
+	"github.com/TudorHulban/GinCRM/pkg/logic/authentication"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,15 +26,17 @@ func (s *HTTPServer) handlerLogin(c *gin.Context) {
 
 	// check if authorized. if authorized return session ID.
 	// in backend insert in session cache the user structure and in user cache the credentials.
-	u := authentication.UserAuth{
+	op := authentication.NewOPAuthenticationNoCache(authentication.UserAuth{
 		Code:     formData.FieldUserCode,
 		Password: formData.FieldPassword,
-	}
-	if errAuthenticate := u.IsAuthenticated(); errAuthenticate != nil {
+	}, s.crudLogic, s.cfg.GLogger)
+
+	if errAuthenticate := op.IsAuthenticated(); errAuthenticate != nil {
 		c.AbortWithStatus(http.StatusUnauthorized)
 		return
 	}
 
+	s.cfg.GLogger.Debug("User Authenticated")
 	c.JSON(http.StatusOK, formData)
 }
 

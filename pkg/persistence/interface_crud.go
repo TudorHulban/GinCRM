@@ -6,10 +6,15 @@ type IUserCreation interface {
 	AddUser(*User) error
 }
 
+// IUserRetrieval Methods used in user retrieval
+type IUserRetrieval interface {
+	GetUserByCredentials(userCode, password string) (*User, error)
+}
+
 // IUserCRUD Full specifications for a user creation process
 type IUserCRUD interface {
 	IUserCreation
-	// Get User Information
+	IUserRetrieval
 	// Update User
 	// Delete USer
 }

@@ -4,12 +4,17 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/TudorHulban/GinCRM/cmd/setup"
+
 	"github.com/TudorHulban/log"
 	"github.com/steinfletcher/apitest"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateUserFlow(t *testing.T) {
+	// clean up
+	setup.CleanRDBMS()
+
 	const socket = "0.0.0.0:8001"
 	cfg, _ := CreateConfig(socket, "0.2.0", log.DEBUG, 1)
 

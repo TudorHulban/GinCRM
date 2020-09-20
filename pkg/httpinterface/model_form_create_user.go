@@ -11,7 +11,7 @@ import (
 
 	"github.com/TudorHulban/GinCRM/pkg/persistence"
 
-	authentication "github.com/TudorHulban/GinCRM/pkg/logic/authenticate"
+	"github.com/TudorHulban/GinCRM/pkg/logic/authentication"
 	"github.com/gin-gonic/gin"
 )
 
@@ -48,12 +48,12 @@ func (s *HTTPServer) handlerCreateUser(c *gin.Context) {
 	}
 
 	// create user in cache
-	cache := authentication.UserAuth{
+	op := authentication.NewOPAuthentication(authentication.UserAuth{
 		Code:     formData.FieldUserCode,
 		Password: formData.FieldPassword,
-	}
+	}, s.crudLogic, s.cfg.GLogger)
 
-	if errCreateCache := cache.SaveToLoginCache(); errCreateCache != nil {
+	if errCreateCache := op.SaveToLoginCache(); errCreateCache != nil {
 		c.AbortWithError(http.StatusInternalServerError, errCreateCache)
 		return
 	}

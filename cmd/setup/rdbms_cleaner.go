@@ -12,9 +12,9 @@ File contains RDBMS cleaner.
 Implementation for SQLite included.
 */
 
-// CleanerRDBMS Checks database used and performs cleaning activities.
+// CleanRDBMS Checks database used and performs cleaning activities.
 // Exported so it can be used in testing in other packages.
-func CleanerRDBMS() {
+func CleanRDBMS() {
 	switch RDBMSType {
 	case RDBMSSQLite:
 		log.Println("Cleaning SQLite.")

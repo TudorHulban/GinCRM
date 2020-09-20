@@ -2,6 +2,7 @@ package authentication
 
 import (
 	"github.com/TudorHulban/GinCRM/pkg/cache/cachelogin"
+	"github.com/TudorHulban/GinCRM/pkg/persistence"
 	"github.com/TudorHulban/badgerwrap"
 	"github.com/TudorHulban/log"
 	"github.com/pkg/errors"
@@ -9,7 +10,10 @@ import (
 
 // OPAuthentication Structure defined for the authentication operation.
 type OPAuthentication struct {
-	l *log.LogInfo
+	useCache  bool
+	data      UserAuth
+	crudLogic persistence.IUserCRUD // access CRUD persistance layer
+	l         *log.LogInfo
 }
 
 // UserAuth Concentrates user authentication based on password or session ID.
@@ -30,43 +34,64 @@ type UserSessionInfo struct {
 
 // NewOPAuthentication Calling authentication one would need a constructor
 // for authentication operation.
-func NewOPAuthentication(credentials UserAuth, logger *log.LogInfo) *OPAuthentication {
+func NewOPAuthentication(credentials UserAuth, crud persistence.IUserCRUD, logger *log.LogInfo) *OPAuthentication {
 	return &OPAuthentication{
-		l: logger,
+		useCache:  true,
+		data:      credentials,
+		crudLogic: crud,
+		l:         logger,
+	}
+}
+
+// NewOPAuthenticationNoCache Calling authentication one would need a constructor
+// for authentication operation.
+func NewOPAuthenticationNoCache(credentials UserAuth, crud persistence.IUserCRUD, logger *log.LogInfo) *OPAuthentication {
+	return &OPAuthentication{
+		useCache:  false,
+		data:      credentials,
+		crudLogic: crud,
+		l:         logger,
 	}
 }
 
 // SaveToLoginCache Method saves user to login cache.
-func (u UserAuth) SaveToLoginCache() error {
+// TODO: based SOLID move to cache package.
+func (op *OPAuthentication) SaveToLoginCache() error {
 	return cachelogin.GetCache().Set(badgerwrap.KV{
-		Key:   []byte(u.Code),
-		Value: []byte(u.Password),
+		Key:   []byte(op.data.Code),
+		Value: []byte(op.data.Password),
 	})
 }
 
 // IsAuthenticated Method checks if credentials match the cache.
-func (u UserAuth) IsAuthenticated() error {
+func (op *OPAuthentication) IsAuthenticated() error {
 	// check if session ID exists and if yes the value in cache
 
-	// check if credentials in cache first
-	errCache := u.isCachedAuthenticated()
-	if errCache == nil {
-		return nil
+	// check if using cache
+	if op.useCache {
+		errCache := op.isCachedAuthenticated()
+		if errCache == nil {
+			return nil
+		}
 	}
 
 	// check if credentials persisted
+	errPersisted := op.isPersistentAuthenticated()
+	if errPersisted == nil {
+		return nil
+	}
 
 	return ErrorUnknownCredentials
 }
 
 // isCachedAUthenticated Checks if app user is cached authenticated
-func (u UserAuth) isCachedAuthenticated() error {
-	pass, errGet := cachelogin.GetCache().GetVByK([]byte(u.Code))
+func (op *OPAuthentication) isCachedAuthenticated() error {
+	pass, errGet := cachelogin.GetCache().GetVByK([]byte(op.data.Code))
 	if errGet != nil {
 		return errors.WithMessage(errGet, "error when checking login cache")
 	}
 
-	if u.Password != string(pass) {
+	if op.data.Password != string(pass) {
 		return errors.New("password does not match login cache one")
 	}
 
@@ -74,11 +99,15 @@ func (u UserAuth) isCachedAuthenticated() error {
 }
 
 // isPersistentAuthenticated Checks if user credentails are according to persisted values.
-func (u UserAuth) isPersistentAuthenticated() error {
-	return nil
+func (op *OPAuthentication) isPersistentAuthenticated() error {
+	_, errGet := op.crudLogic.GetUserByCredentials(op.data.Code, op.data.Password)
+	if errGet == nil {
+		return nil
+	}
+	return ErrorUnknownCredentials
 }
 
 // DeleteFromCache Method deletes credentials from login cache.
-func (u UserAuth) DeleteFromCache(usercode string) error {
+func (op *OPAuthentication) DeleteFromCache(usercode string) error {
 	return cachelogin.GetCache().DeleteKVByK([]byte(usercode))
 }

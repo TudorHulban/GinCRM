@@ -17,7 +17,7 @@ import (
 
 func main() {
 	if len(os.Args) == 2 && os.Args[1] == "version" {
-		fmt.Println(settings.Version) // fmt used instead of log for nicer output.
+		fmt.Println(setup.Version) // fmt used instead of log for nicer output.
 		os.Exit(0)
 	}
 
@@ -25,7 +25,7 @@ func main() {
 	defer cancel()
 
 	// clean up
-	setup.CleanerRDBMS()
+	setup.CleanRDBMS()
 
 	// creating an error group to keep dependencies in sync, only Gin dependency now though.
 	g, ctx := errgroup.WithContext(ctx)
