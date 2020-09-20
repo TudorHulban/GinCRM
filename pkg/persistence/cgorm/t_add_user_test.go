@@ -1,10 +1,12 @@
 package cgorm_test
 
 import (
+	"os"
 	"testing"
 
 	"github.com/TudorHulban/GinCRM/pkg/persistence"
 	"github.com/TudorHulban/GinCRM/pkg/persistence/cgorm"
+	"github.com/TudorHulban/log"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -26,7 +28,7 @@ func TestAddUser(t *testing.T) {
 		}, shouldError: false},
 	}
 
-	var userCRUD cgorm.User
+	userCRUD := cgorm.NewUser(log.New(log.DEBUG, os.Stderr, true))
 
 	for _, tc := range tt {
 		t.Run(tc.testName, func(t *testing.T) {

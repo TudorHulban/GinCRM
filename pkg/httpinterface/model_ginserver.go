@@ -9,6 +9,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/TudorHulban/GinCRM/pkg/persistence"
+	"github.com/TudorHulban/GinCRM/pkg/persistence/cgorm"
+
 	"github.com/TudorHulban/log"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
@@ -57,9 +60,10 @@ func CreateConfig(socket string, ldVersion string, logLevel int, graceSeconds ui
 
 // HTTPServer is HTTP server wrapper.
 type HTTPServer struct {
-	cfg     *Config
-	isReady func() bool // for probes
-	engine  *gin.Engine
+	cfg       *Config
+	isReady   func() bool // for probes
+	engine    *gin.Engine
+	crudLogic persistence.IUserCRUD // access CRUD persistance layer
 }
 
 // NewGinServer creates a new HTTP server.
@@ -88,6 +92,9 @@ func NewGinServer(config *Config) (*HTTPServer, error) {
 	if errRoCreateUser := s.registerRoutes(s.prepareCreateUserRoute()); errRoCreateUser != nil {
 		return nil, errors.WithMessage(errRoCreateUser, "could not prepare create user routes")
 	}
+
+	// adding CRUD logic
+	s.crudLogic = cgorm.NewUser(s.cfg.GLogger)
 
 	return s, nil
 }
