@@ -7,5 +7,5 @@ import (
 
 // MigrateDBSchema Creates or updates database schema.
 func MigrateDBSchema() error {
-	return persistenceconn.GetRDBMSConn().AutoMigrate(interface{}(&persistence.UserAuth{}))
+	return persistenceconn.GetRDBMSConn().AutoMigrate(interface{}(&persistence.User{}))
 }

@@ -16,13 +16,13 @@ func TestAddUser(t *testing.T) {
 
 	tt := []struct {
 		testName    string
-		data        persistence.UserAuth
+		data        persistence.User
 		shouldError bool
 	}{
-		{testName: "validation issues", data: persistence.UserAuth{
+		{testName: "validation issues", data: persistence.User{
 			UserCode: "abcd",
 		}, shouldError: true},
-		{testName: "valid data", data: persistence.UserAuth{
+		{testName: "valid data", data: persistence.User{
 			SecurityGroupID: 1,
 			UserCode:        "abcd",
 		}, shouldError: false},

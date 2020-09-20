@@ -1,10 +1,17 @@
 package ostop
 
+/*
+File contains app OS exit codes.
+Codes after 100 are less important.
+*/
+
 const (
 	// RUNTIME Error.
-	RUNTIME = 101
+	RUNTIME = 10
 	// CACHE Could not create cache.
-	CACHE = 102
+	CACHE = 11
 	// RDBMSConnection Could not create RDBMS connection.
-	RDBMSConnection = 103
+	RDBMSConnection = 12
+	// SQLiteCleanUp could not be performed
+	SQLiteCleanUp = 101
 )

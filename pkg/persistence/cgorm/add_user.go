@@ -22,7 +22,7 @@ func NewUser(logger *log.LogInfo) persistence.IUserCRUD {
 }
 
 // AddUser Method adds user to persistance.
-func (u *User) AddUser(data *persistence.UserAuth) error {
+func (u *User) AddUser(data *persistence.User) error {
 	u.l.Debug("Adding user:", data)
 
 	if errValid := validateStruct(data); errValid != nil {

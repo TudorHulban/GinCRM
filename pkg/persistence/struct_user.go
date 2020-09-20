@@ -4,8 +4,8 @@ package persistence
 File contains structures needed for user management.
 */
 
-// UserAuth Consolidates data referring to user authentication.
-type UserAuth struct {
+// User Consolidates data referring to user authentication.
+type User struct {
 	ID                uint64 `gorm:"primaryKey"`                // user ID, primary key
 	SecurityGroupID   uint8  `validate:"required" gorm:"index"` // security group ID
 	CreatedAt         int64  // UNIX time for creation time
@@ -36,6 +36,6 @@ type Contact struct {
 
 // UserData Consolidates user information for creating a user in persistance layer.
 type UserData struct {
-	UserAuth
+	User
 	Contacts []Contact
 }

@@ -36,7 +36,7 @@ func (s *HTTPServer) handlerCreateUser(c *gin.Context) {
 	}
 
 	// create user in RDBMS
-	u := persistence.UserAuth{
+	u := persistence.User{
 		SecurityGroupID:   1,
 		UserCode:          formData.FieldUserCode,
 		PasswordLoginForm: formData.FieldPassword,
