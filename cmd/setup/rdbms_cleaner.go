@@ -1,0 +1,35 @@
+package setup
+
+import (
+	"log"
+	"os"
+
+	"github.com/TudorHulban/GinCRM/pkg/ostop"
+)
+
+/*
+File contains RDBMS cleaner.
+Implementation for SQLite included.
+*/
+
+// CleanerRDBMS Checks database used and performs cleaning activities.
+// Exported so it can be used in testing in other packages.
+func CleanerRDBMS() {
+	switch RDBMSType {
+	case RDBMSSQLite:
+		log.Println("Cleaning SQLite.")
+		sqliteCleaner()
+	}
+}
+
+func sqliteCleaner() {
+	if _, errExists := os.Stat(SQLiteFilePath); !os.IsNotExist(errExists) {
+		if errCleanSQLite := os.Remove(SQLiteFilePath); errCleanSQLite != nil {
+			log.Println("Error removing previous SQLite database file, error: ", errCleanSQLite)
+			os.Exit(ostop.SQLiteCleanUp)
+		}
+		log.Println("Cleaned file:", SQLiteFilePath)
+		return
+	}
+	log.Println("Did not find to clean file:", SQLiteFilePath)
+}

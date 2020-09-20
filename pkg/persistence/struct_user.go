@@ -11,7 +11,7 @@ type User struct {
 	CreatedAt         int64  // UNIX time for creation time
 	LastLoginAt       int64  // UNIX time for last login
 	LastUpdateAt      int64  // UNIX time for last update
-	UserCode          string `validate:"required"` // user code, used for login
+	UserCode          string `validate:"required" gorm:"uniqueIndex"` // user code, used for login
 	PasswordLoginForm string // password coming from login form
 	PasswordSALT      string // should not be sent in JSON, exported for ORM
 	PasswordHASH      string // should not be sent in JSON, exported for ORM
@@ -21,10 +21,10 @@ type User struct {
 // Contact Is used when defining a app user.
 // The app user should have at least one contact.
 type Contact struct {
-	ID             uint64 // contact ID, primary key
-	UserID         uint64 `pg:"userid"`
-	FirstName      string `json:"firstname"`
-	LastName       string `json:"lasttname"`
+	ID             uint64 `gorm:"primaryKey"` // contact ID, primary key
+	UserID         uint64 `validate:"required"`
+	FirstName      string `validate:"required" json:"firstname"`
+	LastName       string `validate:"required" json:"lasttname"`
 	OfficePhoneNo  string
 	MobilePhoneNo  string
 	CompanyEmail   string

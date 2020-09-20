@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/TudorHulban/GinCRM/cmd/settings"
+	"github.com/TudorHulban/GinCRM/cmd/setup"
 
 	"github.com/TudorHulban/GinCRM/pkg/httpinterface"
 	"github.com/TudorHulban/GinCRM/pkg/ostop"
@@ -25,12 +25,7 @@ func main() {
 	defer cancel()
 
 	// clean up
-	if _, errExists := os.Stat("/path/to/whatever"); !os.IsNotExist(errExists) {
-		if errCleanSQLite := os.Remove(settings.SQLiteFilePath); errCleanSQLite != nil {
-			log.Println("Error removing previous SQLite database file, error: ", errCleanSQLite)
-			os.Exit(ostop.SQLiteCleanUp)
-		}
-	}
+	setup.CleanerRDBMS()
 
 	// creating an error group to keep dependencies in sync, only Gin dependency now though.
 	g, ctx := errgroup.WithContext(ctx)

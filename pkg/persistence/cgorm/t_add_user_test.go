@@ -4,6 +4,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/TudorHulban/GinCRM/cmd/setup"
+
 	"github.com/TudorHulban/GinCRM/pkg/persistence"
 	"github.com/TudorHulban/GinCRM/pkg/persistence/cgorm"
 	"github.com/TudorHulban/log"
@@ -12,6 +14,7 @@ import (
 )
 
 func TestAddUser(t *testing.T) {
+	setup.CleanerRDBMS()
 	require.Nil(t, cgorm.MigrateDBSchema())
 
 	tt := []struct {
@@ -26,6 +29,10 @@ func TestAddUser(t *testing.T) {
 			SecurityGroupID: 1,
 			UserCode:        "abcd",
 		}, shouldError: false},
+		{testName: "same user code", data: persistence.User{
+			SecurityGroupID: 1,
+			UserCode:        "abcd",
+		}, shouldError: true},
 	}
 
 	userCRUD := cgorm.NewUser(log.New(log.DEBUG, os.Stderr, true))
