@@ -7,8 +7,9 @@ Provides only one method which is for logout.
 
 // UserAuthInfo Concentrates response data for authentication operations.
 type UserAuthInfo struct {
-	UserID    int64 // primary key as per user table.
+	UserID    uint64 // primary key as per user table.
 	UserCode  string
+	SessionID string // just generated value
 	UserRoles []uint // A security profile is a list of roles.
 }
 

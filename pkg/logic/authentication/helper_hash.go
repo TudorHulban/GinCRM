@@ -19,7 +19,7 @@ func GenerateSALT() string {
 }
 
 // GenerateSessionID Generates session ID based on settings value and UNIX time.
-func GenerateSessionID() string {
+func generateSessionID() string {
 	return UXSecs() + randomString(setup.LenSessionID)
 }
 

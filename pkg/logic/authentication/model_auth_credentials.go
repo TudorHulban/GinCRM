@@ -16,10 +16,11 @@ type Credentials struct {
 
 // OPAuthenticationCredentials Structure defined for the authentication operations.
 type OPAuthenticationCredentials struct {
-	useCache  bool
-	data      Credentials
-	crudLogic persistence.IUserCRUD // access CRUD persistance layer
-	l         *log.LogInfo
+	useCache          bool
+	data              Credentials
+	crudLogic         persistence.IUserCRUD // access CRUD persistance layer
+	AuthenticatedUser UserAuthInfo          // field to be populated in case of succesful login
+	l                 *log.LogInfo
 }
 
 // NewOPAuthenticationCredentials Calling authentication one would need a constructor
@@ -49,12 +50,14 @@ func (op *OPAuthenticationCredentials) CanLogin() error {
 	// check if credentials exist in cache
 	if op.useCache {
 		if errCache := op.isCachedAuthenticated(); errCache == nil {
+			op.l.Debug("PASS Authentication based on Credentials CACHE")
 			return nil
 		}
 	}
 
 	// check if credentials persisted
 	if errPersisted := op.isPersistentAuthenticated(); errPersisted == nil {
+		op.l.Debug("PASS Authentication based on Credentials Persistance")
 		return nil
 	}
 
@@ -68,6 +71,7 @@ func (op *OPAuthenticationCredentials) isCachedAuthenticated() error {
 		return errors.WithMessage(errGet, "error when checking login cache")
 	}
 
+	// TODO: refactor for hashed password
 	if op.data.Password != string(pass) {
 		return errors.New("password does not match login cache one")
 	}
@@ -86,7 +90,19 @@ func (op *OPAuthenticationCredentials) isPersistentAuthenticated() error {
 		return ErrorUnknownCredentials
 	}
 	if checkPasswordHash(op.data.Password, userData.PasswordSALT, userData.PasswordHASH) {
-		return nil
+		// credentials match, fill authentication info
+		op.AuthenticatedUser = UserAuthInfo{
+			UserID:    userData.ID,
+			UserCode:  userData.UserCode,
+			SessionID: generateSessionID(),
+		}
+
+		// save to credentials cache
+		if errCredenCache := op.saveToCredentialsCache(); errCredenCache != nil {
+			return errCredenCache
+		}
+
+		return op.saveToSessionCache()
 	}
 	op.l.Debugf("Bad password: %v for user: %v", op.data.Password, userData.ID)
 	return ErrorUnknownCredentials
@@ -97,5 +113,13 @@ func (op *OPAuthenticationCredentials) saveToCredentialsCache() error {
 	return cachecredentials.GetCache().Set(badgerwrap.KV{
 		Key:   []byte(op.data.Code),
 		Value: []byte(op.data.Password),
+	})
+}
+
+// saveToSessionCache Method saves credentials to session ID cache.
+func (op *OPAuthenticationCredentials) saveToSessionCache() error {
+	return cachecredentials.GetCache().Set(badgerwrap.KV{
+		Key:   []byte(op.data.Code),
+		Value: []byte(op.AuthenticatedUser.SessionID),
 	})
 }

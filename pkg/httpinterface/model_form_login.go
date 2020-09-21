@@ -13,8 +13,17 @@ type FormLogin struct {
 	FieldPassword string `form:"password" validate:"required"`
 }
 
-// Verify with:
-// curl -v POST -F "usercode=john" -F "password=1234" http://localhost:8080/auth/login
+/*
+handlerLogin Handles login with credentials route.
+Operations happening:
+a. add credentials to user credentials cache
+b. generate session ID
+c. add session ID to session ID cache
+d. return session ID
+
+Verify with:
+curl -v POST -F "usercode=john" -F "password=1234" http://localhost:8080/auth/login
+*/
 func (s *HTTPServer) handlerLogin(c *gin.Context) {
 	formData := new(FormLogin)
 
@@ -22,7 +31,7 @@ func (s *HTTPServer) handlerLogin(c *gin.Context) {
 		return
 	}
 
-	s.cfg.GLogger.Debug("Form Data:", formData)
+	s.cfg.GLogger.Debug("Login Form Data:", formData)
 
 	// check if authorized. if authorized return session ID.
 	// in backend insert in session cache the user structure and in user cache the credentials.
@@ -37,7 +46,7 @@ func (s *HTTPServer) handlerLogin(c *gin.Context) {
 	}
 
 	s.cfg.GLogger.Debug("User Authenticated")
-	c.JSON(http.StatusOK, formData)
+	c.JSON(http.StatusOK, op.AuthenticatedUser.SessionID)
 }
 
 // prepareLoginRoute Method helps with route preparation.
