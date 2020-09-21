@@ -1,4 +1,4 @@
-package cachelogin
+package cachecredentials
 
 import (
 	"os"
@@ -19,7 +19,7 @@ func GetCache() cache.IKV {
 		var errCo error
 		theCache, errCo = badgerwrap.NewBStoreInMem(l)
 		if errCo != nil {
-			l.Info("Could not create Login Cache: ", errCo)
+			l.Info("Could not create Credentials Cache: ", errCo)
 			os.Exit(ostop.CACHE)
 		}
 	}

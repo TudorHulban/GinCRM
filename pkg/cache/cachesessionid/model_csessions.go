@@ -18,7 +18,7 @@ func GetCache() cache.IKV {
 
 		var errCo error
 		theCache, errCo = badgerwrap.NewBStoreInMem(l)
-		l.Info("Could not create Session ID Cache: ", errCo)
+		l.Info("Could not create Session Cache: ", errCo)
 		os.Exit(ostop.CACHE)
 	}
 	return theCache
