@@ -48,15 +48,13 @@ func NewOPAuthenticationCredentialsNoCache(credentials Credentials, crud persist
 func (op *OPAuthenticationCredentials) CanLogin() error {
 	// check if credentials exist in cache
 	if op.useCache {
-		errCache := op.isCachedAuthenticated()
-		if errCache == nil {
+		if errCache := op.isCachedAuthenticated(); errCache == nil {
 			return nil
 		}
 	}
 
 	// check if credentials persisted
-	errPersisted := op.isPersistentAuthenticated()
-	if errPersisted == nil {
+	if errPersisted := op.isPersistentAuthenticated(); errPersisted == nil {
 		return nil
 	}
 
@@ -79,10 +77,18 @@ func (op *OPAuthenticationCredentials) isCachedAuthenticated() error {
 
 // isPersistentAuthenticated Checks if user credentails are according to persisted values.
 func (op *OPAuthenticationCredentials) isPersistentAuthenticated() error {
-	_, errGet := op.crudLogic.GetUserByCredentials(op.data.Code, op.data.Password)
+	userData, errGet := op.crudLogic.GetUserByCredentials(op.data.Code, op.data.Password)
 	if errGet == nil {
 		return nil
 	}
+	if userData == nil {
+		op.l.Debugf("No user with user/passwd: %v/%v", op.data.Code, op.data.Password)
+		return ErrorUnknownCredentials
+	}
+	if checkPasswordHash(op.data.Password, userData.PasswordSALT, userData.PasswordHASH) {
+		return nil
+	}
+	op.l.Debugf("Bad password: %v for user: %v", op.data.Password, userData.ID)
 	return ErrorUnknownCredentials
 }
 

@@ -11,6 +11,7 @@ require (
 	github.com/securego/gosec v0.0.0-20200401082031-e946c8c39989 // indirect
 	github.com/steinfletcher/apitest v1.4.10
 	github.com/stretchr/testify v1.6.1
+	golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550
 	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208
 	gorm.io/driver/sqlite v1.1.3
 	gorm.io/gorm v1.20.1

@@ -9,4 +9,8 @@ File contains authentication settings, ex.:
 const (
 	// LenSALT Is lenght for salt.
 	LenSALT = 7
+	// HASHCost Holder for bcrypt HASH cost.
+	HASHCost = 14
+	// LenSessionID Holder for session ID length.
+	LenSessionID = 20
 )

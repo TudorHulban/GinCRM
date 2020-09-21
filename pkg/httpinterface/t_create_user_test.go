@@ -5,15 +5,18 @@ import (
 	"testing"
 
 	"github.com/TudorHulban/GinCRM/cmd/setup"
+	"github.com/TudorHulban/GinCRM/pkg/persistence/cgorm"
 
 	"github.com/TudorHulban/log"
 	"github.com/steinfletcher/apitest"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestCreateUserFlow(t *testing.T) {
 	// clean up
 	setup.CleanRDBMS()
+	require.Nil(t, cgorm.MigrateDBSchema())
 
 	const socket = "0.0.0.0:8001"
 	cfg, _ := CreateConfig(socket, "0.2.0", log.DEBUG, 1)

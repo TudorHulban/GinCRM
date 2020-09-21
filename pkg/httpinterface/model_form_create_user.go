@@ -8,9 +8,10 @@ No cache update, only creation.
 import (
 	"net/http"
 	"strconv"
+	"time"
 
+	"github.com/TudorHulban/GinCRM/pkg/logic/authentication"
 	"github.com/TudorHulban/GinCRM/pkg/persistence"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -35,10 +36,21 @@ func (s *HTTPServer) handlerCreateUser(c *gin.Context) {
 	}
 
 	// create user in RDBMS
+	salt := authentication.GenerateSALT()
+	hashedPassword, errHash := authentication.HASHPassword(formData.FieldPassword, salt)
+	if errHash != nil {
+		c.AbortWithError(http.StatusInternalServerError, errHash)
+		return
+	}
+
 	u := persistence.User{
 		SecurityGroupID:   1,
+		CreatedAt:         time.Now().Unix(),
+		LastUpdateAt:      time.Now().Unix(),
 		UserCode:          formData.FieldUserCode,
 		PasswordLoginForm: formData.FieldPassword,
+		PasswordSALT:      salt,
+		PasswordHASH:      string(hashedPassword),
 	}
 
 	if errCreate := s.crudLogic.AddUser(&u); errCreate != nil {
