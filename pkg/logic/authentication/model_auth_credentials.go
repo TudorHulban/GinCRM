@@ -1,7 +1,7 @@
 package authentication
 
 import (
-	"github.com/TudorHulban/GinCRM/pkg/cache/cachelogin"
+	"github.com/TudorHulban/GinCRM/pkg/cache/cachecredentials"
 	"github.com/TudorHulban/GinCRM/pkg/persistence"
 	"github.com/TudorHulban/badgerwrap"
 	"github.com/TudorHulban/log"
@@ -65,7 +65,7 @@ func (op *OPAuthenticationCredentials) CanLogin() error {
 
 // isCachedAUthenticated Checks if app user is cached authenticated
 func (op *OPAuthenticationCredentials) isCachedAuthenticated() error {
-	pass, errGet := cachelogin.GetCache().GetVByK([]byte(op.data.Code))
+	pass, errGet := cachecredentials.GetCache().GetVByK([]byte(op.data.Code))
 	if errGet != nil {
 		return errors.WithMessage(errGet, "error when checking login cache")
 	}
@@ -88,7 +88,7 @@ func (op *OPAuthenticationCredentials) isPersistentAuthenticated() error {
 
 // saveToLoginCache Method saves credentials to login cache.
 func (op *OPAuthenticationCredentials) saveToCredentialsCache() error {
-	return cachelogin.GetCache().Set(badgerwrap.KV{
+	return cachecredentials.GetCache().Set(badgerwrap.KV{
 		Key:   []byte(op.data.Code),
 		Value: []byte(op.data.Password),
 	})

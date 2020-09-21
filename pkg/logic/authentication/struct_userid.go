@@ -14,5 +14,5 @@ type UserAuthInfo struct {
 
 // Logout Performs clean up from credentials and session cache
 func (a UserAuthInfo) Logout() error {
-	logoutCredentialsCache(a.UserCode)
+	return logoutCredentialsCache(a.UserCode)
 }

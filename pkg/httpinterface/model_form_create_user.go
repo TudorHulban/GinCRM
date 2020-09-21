@@ -2,7 +2,7 @@ package httpinterface
 
 /*
 Create user handler.
-During the user creation process the cache is updated accordingly.
+No cache update, only creation.
 */
 
 import (
@@ -11,7 +11,6 @@ import (
 
 	"github.com/TudorHulban/GinCRM/pkg/persistence"
 
-	"github.com/TudorHulban/GinCRM/pkg/logic/authentication"
 	"github.com/gin-gonic/gin"
 )
 
@@ -44,17 +43,6 @@ func (s *HTTPServer) handlerCreateUser(c *gin.Context) {
 
 	if errCreate := s.crudLogic.AddUser(&u); errCreate != nil {
 		c.AbortWithError(http.StatusInternalServerError, errCreate)
-		return
-	}
-
-	// create user in cache
-	op := authentication.NewOPAuthentication(authentication.UserAuth{
-		Code:     formData.FieldUserCode,
-		Password: formData.FieldPassword,
-	}, s.crudLogic, s.cfg.GLogger)
-
-	if errCreateCache := op.SaveToLoginCache(); errCreateCache != nil {
-		c.AbortWithError(http.StatusInternalServerError, errCreateCache)
 		return
 	}
 

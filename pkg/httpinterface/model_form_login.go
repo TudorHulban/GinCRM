@@ -26,12 +26,12 @@ func (s *HTTPServer) handlerLogin(c *gin.Context) {
 
 	// check if authorized. if authorized return session ID.
 	// in backend insert in session cache the user structure and in user cache the credentials.
-	op := authentication.NewOPAuthenticationNoCache(authentication.UserAuth{
+	op := authentication.NewOPAuthenticationCredentialsNoCache(authentication.Credentials{
 		Code:     formData.FieldUserCode,
 		Password: formData.FieldPassword,
 	}, s.crudLogic, s.cfg.GLogger)
 
-	if errAuthenticate := op.IsAuthenticated(); errAuthenticate != nil {
+	if errAuthenticate := op.CanLogin(); errAuthenticate != nil {
 		c.AbortWithStatus(http.StatusUnauthorized)
 		return
 	}
