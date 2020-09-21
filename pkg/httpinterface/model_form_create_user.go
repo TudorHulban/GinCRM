@@ -27,7 +27,7 @@ type ResponseCreateUser struct {
 }
 
 // Verify with:
-// curl -X POST -F "usercode=john" -F "password=1234" http://localhost:8080/auth/createuser
+// curl -v POST -F "usercode=john" -F "password=1234" http://localhost:8080/auth/createuser
 func (s *HTTPServer) handlerCreateUser(c *gin.Context) {
 	var formData FormCreateUser
 

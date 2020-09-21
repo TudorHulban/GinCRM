@@ -78,8 +78,8 @@ func (op *OPAuthenticationCredentials) isCachedAuthenticated() error {
 // isPersistentAuthenticated Checks if user credentails are according to persisted values.
 func (op *OPAuthenticationCredentials) isPersistentAuthenticated() error {
 	userData, errGet := op.crudLogic.GetUserByCredentials(op.data.Code, op.data.Password)
-	if errGet == nil {
-		return nil
+	if errGet != nil {
+		return errGet
 	}
 	if userData == nil {
 		op.l.Debugf("No user with user/passwd: %v/%v", op.data.Code, op.data.Password)

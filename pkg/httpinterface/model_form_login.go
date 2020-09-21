@@ -14,7 +14,7 @@ type FormLogin struct {
 }
 
 // Verify with:
-// curl -X POST -F "usercode=john" -F "password=1234" http://localhost:8080/auth/login
+// curl -v POST -F "usercode=john" -F "password=1234" http://localhost:8080/auth/login
 func (s *HTTPServer) handlerLogin(c *gin.Context) {
 	formData := new(FormLogin)
 
