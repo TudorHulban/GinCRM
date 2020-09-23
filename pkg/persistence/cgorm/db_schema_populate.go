@@ -12,11 +12,15 @@ func PopulateSchemaSecurityRoles(logger *log.LogInfo) error {
 
 	for _, right := range setup.SecuRights {
 		if errSecu = AddSecurityRight(right, logger); errSecu != nil {
-			return errors.WithMessage(errValid, " adding security right")
+			return errors.WithMessagef(errSecu, "error adding security right: %v", right)
 		}
 	}
 
 	for _, role := range setup.SecuRoles {
-		AddSecurityRight(role, logger)
+		if errSecu = AddSecurityRole(role, logger); errSecu != nil {
+			return errors.WithMessagef(errSecu, "error adding security role: %v", role)
+		}
 	}
+
+	return nil
 }
