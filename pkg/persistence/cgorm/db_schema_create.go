@@ -7,11 +7,12 @@ import (
 
 // MigrateDBSchema Creates or updates database schema.
 func MigrateDBSchema() error {
-	tables := []interface{}{
-		interface{}(&persistence.User{}),
-		interface{}(&persistence.SecurityRight{}),
-		interface{}(&persistence.SecurityRole{}),
-		interface{}(&persistence.RoleDefinition{}),
-	}
-	return persistenceconn.GetRDBMSConn().AutoMigrate(tables)
+	tables := interface{}(&persistence.SecurityRole{})
+	
+	//[]interface{}{		interface{}(&persistence.SecurityRole{}),		interface{}(&persistence.RoleDefinition{}),,, persistence.SecurityRight{}
+	} 
+
+
+
+	return persistenceconn.GetRDBMSConn().AutoMigrate(persistence.User{})
 }

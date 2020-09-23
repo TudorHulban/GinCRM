@@ -23,11 +23,13 @@ func main() {
 	ctx, cancel := ostop.NewOSCancellableCtx()
 	defer cancel()
 
-	// app logger
+	// app logger - sets application log level
 	appLogger := log.New(log.DEBUG, os.Stderr, true)
 
-	// clean up
+	// clean up persistence
 	setup.CleanRDBMS()
+
+	// populate persistence
 	cgorm.PopulateSchemaSecurityRoles(appLogger)
 
 	// creating an error group to keep dependencies in sync, only Gin dependency now though.

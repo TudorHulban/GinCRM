@@ -18,6 +18,7 @@ func GetRDBMSConn() *gorm.DB {
 		theRDBMSConn, errCo = gorm.Open(sqlite.Open("/home/tudi/ram/gorm.db"), &gorm.Config{
 			DisableAutomaticPing: true,
 		})
+
 		if errCo != nil {
 			log.Println("Could not create RDBMS Connection: ", errCo)
 			os.Exit(ostop.RDBMSConnection)

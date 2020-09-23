@@ -1,5 +1,17 @@
 # GinCRM
 
+## Init testing
+Testing should start with:<br/>
+a. clean up RDBMS
+```
+setup.CleanRDBMS()
+```
+
+b. create tables
+```
+require.Nil(t, cgorm.MigrateDBSchema())
+```
+
 ## Persisted structures definition should reside in /pck/persistence package. 
 
 ## Test User creation
