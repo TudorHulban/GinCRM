@@ -30,15 +30,11 @@ func main() {
 	setup.CleanRDBMS()
 
 	// populate persistence
+	cgorm.MigrateDBSchema() // creating RDBMS schema
 	cgorm.PopulateSchemaSecurityRoles(appLogger)
 
 	// creating an error group to keep dependencies in sync, only Gin dependency now though.
 	g, ctx := errgroup.WithContext(ctx)
-
-	// creating RDBMS schema
-	g.Go(func() error {
-		return cgorm.MigrateDBSchema()
-	})
 
 	// creating HTTP layer
 	g.Go(func() error {

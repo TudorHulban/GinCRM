@@ -12,6 +12,9 @@ b. create tables
 require.Nil(t, cgorm.MigrateDBSchema())
 ```
 
+c. insert data
+Pointers should be used to pass to ORM with data to insert.
+
 ## Persisted structures definition should reside in /pck/persistence package. 
 
 ## Test User creation

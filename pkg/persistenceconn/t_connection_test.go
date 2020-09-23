@@ -5,6 +5,7 @@ import (
 
 	"github.com/TudorHulban/GinCRM/cmd/setup"
 	"github.com/TudorHulban/GinCRM/pkg/persistenceconn"
+	"github.com/stretchr/testify/assert"
 )
 
 type TableA struct {
@@ -17,9 +18,21 @@ type TableB struct {
 	Description string `validate:"required"`
 }
 
+// TestTableCreation Targets the capacity of persisting one structure at a time.
+func TestTableCreation(t *testing.T) {
+	setup.CleanRDBMS()
+
+	db := persistenceconn.GetRDBMSConn()
+	assert.Nil(t, db.AutoMigrate(TableA{}))
+	assert.True(t, db.Migrator().HasTable(TableA{}))
+}
+
+// TestTablesCreation Targets the capacity of persisting several structures at a time.
 func TestTablesCreation(t *testing.T) {
 	setup.CleanRDBMS()
 
 	db := persistenceconn.GetRDBMSConn()
-	db.
+	assert.Nil(t, db.AutoMigrate(TableA{}, TableB{}))
+	assert.True(t, db.Migrator().HasTable(TableA{}))
+	assert.True(t, db.Migrator().HasTable(TableB{}))
 }
