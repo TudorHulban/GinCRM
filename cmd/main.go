@@ -31,7 +31,10 @@ func main() {
 
 	// populate persistence
 	cgorm.MigrateDBSchema() // creating RDBMS schema
-	cgorm.PopulateSchemaSecurityRoles(appLogger)
+	if errPo := cgorm.PopulateSchemaSecurityRoles(appLogger); errPo != nil {
+		appLogger.Info("Error RDBMS schema population: ", errPo)
+		os.Exit(ostop.RDBMSPopulationOfSchema)
+	}
 
 	// creating an error group to keep dependencies in sync, only Gin dependency now though.
 	g, ctx := errgroup.WithContext(ctx)
@@ -50,7 +53,7 @@ func main() {
 	})
 
 	if errWait := g.Wait(); errWait != nil {
-		appLogger.Debug("Error group runtime error: ", errWait)
+		appLogger.Info("Error group runtime: ", errWait)
 		os.Exit(ostop.RUNTIME)
 	}
 }

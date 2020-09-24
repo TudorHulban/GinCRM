@@ -12,6 +12,8 @@ const (
 	CACHE = 11
 	// RDBMSConnection Could not create RDBMS connection.
 	RDBMSConnection = 12
+	// RDBMSPopulationOfSchema Could not create RDBMS connection.
+	RDBMSPopulationOfSchema = 14
 	// SQLiteCleanUp could not be performed
 	SQLiteCleanUp = 101
 )

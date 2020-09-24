@@ -31,3 +31,53 @@ func AddSecurityRole(description string, logger *log.LogInfo) error {
 	res := persistenceconn.GetRDBMSConn().Create(&data)
 	return res.Error
 }
+
+// AddSecurityProfile Helper for adding security role.
+func AddSecurityProfile(description string, logger *log.LogInfo) error {
+	data := persistence.SecurityProfile{
+		Description: description,
+	}
+	if errValid := validateStruct(&data); errValid != nil {
+		return errors.WithMessage(errValid, "validation error when adding security profile")
+	}
+	res := persistenceconn.GetRDBMSConn().Create(&data)
+	return res.Error
+}
+
+// AddSecurityRoleDefinition Helper for adding security profile.
+func AddSecurityRoleDefinition(roleID uint8, roleRights []uint8, logger *log.LogInfo) error {
+	data := make([]persistence.SecurityDefRole, len(roleRights))
+
+	for i, rightID := range roleRights {
+		data[i] = persistence.SecurityDefRole{
+			RoleID:  roleID,
+			RightID: rightID,
+		}
+
+		if errValid := validateStruct(&data[i]); errValid != nil {
+			return errors.WithMessagef(errValid, "validation error when adding security role:%v for security right:%v", roleID, rightID)
+		}
+	}
+
+	res := persistenceconn.GetRDBMSConn().Create(&data)
+	return res.Error
+}
+
+// AddSecurityProfileDefinition Helper for adding security profile.
+func AddSecurityProfileDefinition(profileID uint8, profileRoles []uint8, logger *log.LogInfo) error {
+	data := make([]persistence.SecurityDefProfile, len(profileRoles))
+
+	for i, roleID := range profileRoles {
+		data[i] = persistence.SecurityDefProfile{
+			ProfileID: profileID,
+			RoleID:    roleID,
+		}
+
+		if errValid := validateStruct(&data[i]); errValid != nil {
+			return errors.WithMessagef(errValid, "validation error when adding security profile:%v for role:%v", profileID, roleID)
+		}
+	}
+
+	res := persistenceconn.GetRDBMSConn().Create(&data)
+	return res.Error
+}

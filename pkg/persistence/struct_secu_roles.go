@@ -12,10 +12,24 @@ type SecurityRole struct {
 	Description string `validate:"required"`
 }
 
-// RoleDefinition Structure defined for persisting role definition.
+// SecurityDefRole Structure defined for persisting role definition.
 // A role is defined by the security rights it has.
-type RoleDefinition struct {
-	ID      uint64 `gorm:"primaryKey"`
-	RoleID  uint8  `validate:"required"`
-	RightID uint8  `validate:"required"`
+type SecurityDefRole struct {
+	RoleID  uint8 `validate:"required"`
+	RightID uint8 `validate:"required"`
+}
+
+// SecurityProfile Structure defined for persisting security profile.
+//
+// A profile contains a list of roles for each area it needs to have access to.
+type SecurityProfile struct {
+	ID          uint8  `gorm:"primaryKey"`
+	Description string `validate:"required"`
+}
+
+// SecurityDefProfile Structure defined for persisting role definition.
+// A role is defined by the security rights it has.
+type SecurityDefProfile struct {
+	ProfileID uint8 `validate:"required"`
+	RoleID    uint8 `validate:"required"`
 }

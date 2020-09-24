@@ -26,5 +26,13 @@ func PopulateSchemaSecurityRoles(l *log.LogInfo) error {
 		}
 	}
 
+	l.Debug("Populating persistence layer with security roles definition:")
+
+	for roleID, theRights := range setup.RolesDefinition {
+		if errSecu = AddSecurityRoleDefinition(uint8(roleID), theRights, l); errSecu != nil {
+			return errors.WithMessagef(errSecu, "error adding security role: %v", roleID)
+		}
+	}
+
 	return nil
 }
