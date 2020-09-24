@@ -15,8 +15,8 @@ type SecurityRole struct {
 // SecurityDefRole Structure defined for persisting role definition.
 // A role is defined by the security rights it has.
 type SecurityDefRole struct {
-	RoleID  uint8 `validate:"required"`
-	RightID uint8 `validate:"required"`
+	RoleID  uint8 `validate:"gte=0"`
+	RightID uint8 `validate:"gte=0"`
 }
 
 // SecurityProfile Structure defined for persisting security profile.
@@ -30,6 +30,6 @@ type SecurityProfile struct {
 // SecurityDefProfile Structure defined for persisting role definition.
 // A role is defined by the security rights it has.
 type SecurityDefProfile struct {
-	ProfileID uint8 `validate:"required"`
-	RoleID    uint8 `validate:"required"`
+	ProfileID uint8 `validate:"gte=0"`
+	RoleID    uint8 `validate:"gte=0"`
 }
