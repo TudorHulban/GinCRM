@@ -65,6 +65,10 @@ func AddSecurityRoleDefinition(roleID uint8, roleRights []uint8, l *log.LogInfo)
 
 // AddSecurityProfileDefinition Helper for adding security profile.
 func AddSecurityProfileDefinition(profileID uint8, profileRoles []uint8, l *log.LogInfo) error {
+	if profileRoles == nil {
+		return errors.New("no roles for passed profile")
+	}
+
 	data := make([]persistence.SecurityDefProfile, len(profileRoles))
 
 	for i, roleID := range profileRoles {

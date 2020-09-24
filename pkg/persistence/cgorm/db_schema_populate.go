@@ -34,5 +34,13 @@ func PopulateSchemaSecurityRoles(l *log.LogInfo) error {
 		}
 	}
 
+	l.Debug("Populating persistence layer with security profiles definition:")
+
+	for profileID, theRights := range setup.ProfilesDefinition {
+		if errSecu = AddSecurityProfileDefinition(uint8(profileID), theRights, l); errSecu != nil {
+			return errors.WithMessagef(errSecu, "error adding security profile: %v", profileID)
+		}
+	}
+
 	return nil
 }
