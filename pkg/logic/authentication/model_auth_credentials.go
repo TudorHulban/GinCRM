@@ -117,6 +117,7 @@ func (op *OPAuthenticationCredentials) saveToCredentialsCache() error {
 }
 
 // saveToSessionCache Method saves credentials to session ID cache.
+// Method placed in this file as operation par of user creation and (re)login.
 func (op *OPAuthenticationCredentials) saveToSessionCache() error {
 	return cachecredentials.GetCache().Set(badgerwrap.KV{
 		Key:   []byte(op.data.Code),
