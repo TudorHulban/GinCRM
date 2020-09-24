@@ -27,6 +27,5 @@ func (u *User) AddUser(data *persistence.User) error {
 		return errors.WithMessage(errValid, "validation error when adding user")
 	}
 
-	res := persistenceconn.GetRDBMSConn().Create(data)
-	return res.Error
+	return persistenceconn.GetRDBMSConn().Create(data).Error
 }

@@ -1,5 +1,10 @@
 package persistence
 
+// ISecurityRoles Methods used in user security rights and roles.
+type ISecurityRoles interface {
+	GetSecurityRightsForProfile(profileID uint8) ([]uint8, error)
+}
+
 // IUserCreation Methods used in user creation
 type IUserCreation interface {
 	// Create User, passing pointer to return created ID
