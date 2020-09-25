@@ -21,14 +21,32 @@ func NewSecurityRR(logger *log.LogInfo) persistence.ISecurityRoles {
 	}
 }
 
+// GetSecurityRightsForRole Returns a slice with security rights given the role ID.
+func (op *SecurityRR) GetSecurityRightsForRole(roleID uint8) ([]uint8, error) {
+	op.l.Debugf("Fetching user rights for role ID:%v", roleID)
+
+	var userRoleDef []persistence.SecurityDefRole
+	persistenceconn.GetRDBMSConn().Where("role_id = ?", roleID).Find(&userRoleDef)
+
+	if userRoleDef == nil {
+		return nil, fmt.Errorf("no security roles found for role:%v", roleID)
+	}
+
+	result := make([]uint8, len(userRoleDef))
+	for i, definition := range userRoleDef {
+		result[i] = definition.RightID
+	}
+
+	op.l.Debugf("User rights for role ID:%v are:%v", roleID, result)
+	return result, nil
+}
+
 // GetSecurityRightsForProfile Returns a slice with security rights given the profile ID.
 func (op *SecurityRR) GetSecurityRightsForProfile(profileID uint8) ([]uint8, error) {
 	op.l.Debugf("Fetching user rights for profile ID:%v", profileID)
 
 	var userProfilesDef []persistence.SecurityDefProfile
-
-	db := persistenceconn.GetRDBMSConn()
-	db.Where("profile_id = ?", profileID).Find(&userProfilesDef)
+	persistenceconn.GetRDBMSConn().Where("profile_id = ?", profileID).Find(&userProfilesDef)
 
 	userRoles := make([]uint8, len(userProfilesDef))
 	for i, definition := range userProfilesDef {
@@ -48,24 +66,12 @@ func (op *SecurityRR) GetSecurityRightsForProfile(profileID uint8) ([]uint8, err
 	return result, nil
 }
 
-// GetSecurityRightsForRole Returns a slice with security rights given the role ID.
-func (op *SecurityRR) GetSecurityRightsForRole(roleID uint8) ([]uint8, error) {
-	op.l.Debugf("Fetching user rights for role ID:%v", roleID)
+func (op *SecurityRR) GetSecurityProfilesDefinition() (map[uint8][]uint8, error) {
+	op.l.Debug("Fetching security profiles definition")
 
-	var userRoleDef []persistence.SecurityDefRole
+	var userProfiles []persistence.SecurityProfile
+	persistenceconn.GetRDBMSConn().Find(&userProfiles)
 
-	db := persistenceconn.GetRDBMSConn()
-	db.Where("role_id = ?", roleID).Find(&userRoleDef)
+	userProfiles := make([]uint8, len(userProfiles))
 
-	if userRoleDef == nil {
-		return nil, fmt.Errorf("no security roles found for role:%v", roleID)
-	}
-
-	result := make([]uint8, len(userRoleDef))
-	for i, definition := range userRoleDef {
-		result[i] = definition.RightID
-	}
-
-	op.l.Debugf("User rights for role ID:%v are:%v", roleID, result)
-	return result, nil
 }

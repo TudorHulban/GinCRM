@@ -3,6 +3,10 @@ package persistence
 // ISecurityRoles Methods used in user security rights and roles.
 type ISecurityRoles interface {
 	GetSecurityRightsForProfile(profileID uint8) ([]uint8, error)
+	// Returns map.
+	// Map KEY: profile ID.
+	// Map Value: slice of user rights.
+	GetSecurityProfilesDefinition() (map[uint8][]uint8, error)
 }
 
 // IUserCreation Methods used in user creation
