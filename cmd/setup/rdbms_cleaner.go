@@ -14,6 +14,8 @@ Implementation for SQLite included.
 
 // CleanRDBMS Checks database used and performs cleaning activities.
 // Exported so it can be used in testing in other packages.
+//
+// Do not use for testing.
 func CleanRDBMS() {
 	switch RDBMSType {
 	case RDBMSSQLite:

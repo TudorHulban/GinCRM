@@ -17,14 +17,23 @@ var theRDBMSConn *gorm.DB
 // GetRDBMSConn Returns RDBMS connection handler.
 func GetRDBMSConn() *gorm.DB {
 	if theRDBMSConn == nil {
-		var errCo error
+		if errMake := os.MkdirAll(setup.SQLiteFilePath, os.ModePerm); errMake != nil {
+			log.Println("Could not create folder for SQLite database: ", errMake)
+			os.Exit(ostop.SQLiteFolderCreation)
+		}
 
-		os.MkdirAll(setup.SQLiteFilePath, os.ModePerm)
-		path := strings.Split(setup.SQLiteFilePath, ".")
-		theRDBMSConn, errCo = gorm.Open(sqlite.Open(strings.Join([]string{path[0], authentication.UXNano(), ".", path[1]}, "")), &gorm.Config{
+		var pathSQLite string
+		if setup.RDBMSModeTesting {
+			path := strings.Split(setup.SQLiteFilePath, ".")
+			pathSQLite = strings.Join([]string{path[0], authentication.UXNano(), ".", path[1]}, "")
+		} else {
+			pathSQLite = setup.SQLiteFilePath
+		}
+
+		var errCo error
+		theRDBMSConn, errCo = gorm.Open(sqlite.Open(pathSQLite), &gorm.Config{
 			DisableAutomaticPing: true,
 		})
-
 		if errCo != nil {
 			log.Println("Could not create RDBMS Connection: ", errCo)
 			os.Exit(ostop.RDBMSConnection)
