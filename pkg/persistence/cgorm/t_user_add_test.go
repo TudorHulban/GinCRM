@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/TudorHulban/GinCRM/cmd/setup"
-
 	"github.com/TudorHulban/GinCRM/pkg/persistence"
 	"github.com/TudorHulban/GinCRM/pkg/persistence/cgorm"
 	"github.com/TudorHulban/log"

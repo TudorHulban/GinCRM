@@ -67,11 +67,34 @@ func (op *SecurityRR) GetSecurityRightsForProfile(profileID uint8) ([]uint8, err
 }
 
 func (op *SecurityRR) GetSecurityProfilesDefinition() (map[uint8][]uint8, error) {
-	op.l.Debug("Fetching security profiles definition")
+	op.l.Debug("Fetching security profiles definition:")
 
 	var userProfiles []persistence.SecurityProfile
 	persistenceconn.GetRDBMSConn().Find(&userProfiles)
 
-	userProfiles := make([]uint8, len(userProfiles))
+	if len(userProfiles) == 0 {
+		return nil, errors.New("did not find any profile")
+	}
 
+	profiles := make([]uint8, len(userProfiles))
+	for i, profile := range userProfiles {
+		profiles[i] = profile.ID
+	}
+
+	op.l.Debugf("Found profiles:%v", profiles)
+
+	result := make(map[uint8][]uint8, len(profiles))
+
+	for profileID := range profiles {
+		op.l.Debugf("Fetching security rights for profile ID:%v", profileID)
+
+		secuRights, errOp := op.GetSecurityRightsForProfile(uint8(profileID))
+		if errOp != nil {
+			return nil, errors.WithMessagef(errOp, "error when fetching security rights for profile ID:%v", profileID)
+		}
+		op.l.Debugf("Security rights for profile ID:%v are:%v", profileID, secuRights)
+		result[uint8(profileID)] = secuRights
+	}
+
+	return result, nil
 }

@@ -16,11 +16,15 @@ func TestGetSecurityRightsByProfile(t *testing.T) {
 	require.Nil(t, cgorm.MigrateDBSchema())
 
 	l := log.New(log.DEBUG, os.Stderr, true)
-	assert.Nil(t, cgorm.PopulateSchemaSecurityRoles(l))
+	require.Nil(t, cgorm.PopulateSchemaSecurityRoles(l))
 
 	secu := cgorm.NewSecurityRR(l)
 
 	userRights, errOp := secu.GetSecurityRightsForProfile(0)
-	assert.Nil(t, errOp)
+	require.Nil(t, errOp)
 	assert.Greater(t, len(userRights), 0)
+
+	secuProfiles, errPro := secu.GetSecurityProfilesDefinition()
+	require.Nil(t, errPro)
+	assert.Greater(t, len(secuProfiles), 0)
 }
