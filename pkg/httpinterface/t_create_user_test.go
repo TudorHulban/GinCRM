@@ -2,6 +2,7 @@ package httpinterface
 
 import (
 	"net/http"
+	"os"
 	"testing"
 
 	"github.com/TudorHulban/GinCRM/cmd/setup"
@@ -19,7 +20,7 @@ func TestCreateUserFlow(t *testing.T) {
 	require.Nil(t, cgorm.MigrateDBSchema())
 
 	const socket = "0.0.0.0:8001"
-	cfg, _ := CreateConfig(socket, "0.2.0", log.DEBUG, 1)
+	cfg, _ := CreateConfig(socket, "0.2.0", log.New(log.DEBUG, os.Stderr, true), 1)
 
 	tt := []struct {
 		testName       string

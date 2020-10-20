@@ -2,6 +2,7 @@ package httpinterface
 
 import (
 	"net/http"
+	"os"
 	"testing"
 
 	"github.com/TudorHulban/log"
@@ -11,7 +12,7 @@ import (
 
 func TestHandlersInfrastructure(t *testing.T) {
 	const socket = "0.0.0.0:8001"
-	cfg, _ := CreateConfig(socket, "0.2.0", log.DEBUG, 1)
+	cfg, _ := CreateConfig(socket, "0.2.0", log.New(log.DEBUG, os.Stderr, true), 1)
 
 	s, errCo := NewGinServer(cfg)
 	if assert.Nil(t, errCo) {

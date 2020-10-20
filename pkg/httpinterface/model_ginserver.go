@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -34,7 +33,7 @@ type Config struct {
 // CreateConfig Package Helper for creating Gin configuration.
 // Holds also validators.
 // socket like "0.0.0.0:8080"
-func CreateConfig(socket string, ldVersion string, logLevel int, graceSeconds uint8) (*Config, error) {
+func CreateConfig(socket string, ldVersion string, logger *log.LogInfo, graceSeconds uint8) (*Config, error) {
 	// input validation
 	ipv4 := socket[:strings.Index(socket, ":")]
 
@@ -54,7 +53,7 @@ func CreateConfig(socket string, ldVersion string, logLevel int, graceSeconds ui
 		IPV4Address:   ipv4,
 		Port:          uint16(port),
 		BinaryVersion: ldVersion,
-		GLogger:       log.New(logLevel, os.Stderr, true),
+		GLogger:       logger,
 	}, nil
 }
 

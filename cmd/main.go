@@ -41,7 +41,7 @@ func main() {
 
 	// creating HTTP layer
 	g.Go(func() error {
-		cfg, errConfig := httpinterface.CreateConfig("0.0.0.0:8080", "0.1", log.DEBUG, 3)
+		cfg, errConfig := httpinterface.CreateConfig("0.0.0.0:8080", "0.1", appLogger, 3)
 		if errConfig != nil {
 			return errors.WithMessage(errConfig, "errors creating HTTP Server configuration")
 		}

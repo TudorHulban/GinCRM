@@ -12,13 +12,12 @@ import (
 var theCache *badgerwrap.BStore
 
 // GetCache Returns session ID cache object.
-func GetCache() cache.IKV {
-	if theCache == nil {
-		l := log.New(log.DEBUG, os.Stderr, true)
-
+// Using varidic for the cases where logger for sure was already created.
+func GetCache(l ...*log.LogInfo) cache.IKV {
+	if (theCache == nil) && (len(l) > 0) {
 		var errCo error
-		theCache, errCo = badgerwrap.NewBStoreInMem(l)
-		l.Info("Could not create Session Cache: ", errCo)
+		theCache, errCo = badgerwrap.NewBStoreInMem(l[0])
+		l[0].Infof("error trying to create session ID cache:%v", errCo)
 		os.Exit(ostop.CACHE)
 	}
 	return theCache
