@@ -3,6 +3,7 @@ package cgorm
 import (
 	"github.com/TudorHulban/GinCRM/pkg/persistence"
 	"github.com/TudorHulban/GinCRM/pkg/persistenceconn"
+	"github.com/pkg/errors"
 )
 
 // GetUserByCredentials Fetches user by credentials.
@@ -12,8 +13,10 @@ func (u *User) GetUserByCredentials(userCode, password string) (*persistence.Use
 	var fetchedUserData persistence.User
 	res := persistenceconn.GetRDBMSConn().Where(&persistence.User{UserCode: userCode}).First(&fetchedUserData)
 	if res.Error != nil {
-		return nil, ErrorDatabase
+		return nil, errors.WithMessage(res.Error, errorDatabaseOp)
 	}
+
+	u.l.Debugf("Found user data: %v", fetchedUserData)
 
 	return &fetchedUserData, nil
 }

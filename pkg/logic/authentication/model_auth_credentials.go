@@ -66,7 +66,12 @@ func (op *OPAuthenticationCredentials) CanLogin() error {
 
 // isCachedAUthenticated Checks if app user is cached authenticated
 func (op *OPAuthenticationCredentials) isCachedAuthenticated() error {
-	pass, errGet := cachecredentials.GetCache().GetVByK([]byte(op.data.Code))
+	i, errCache := cachecredentials.GetCache()
+	if errCache != nil {
+		return errors.WithMessage(errCache, "could not access cache")
+	}
+
+	pass, errGet := i.GetVByK([]byte(op.data.Code))
 	if errGet != nil {
 		return errors.WithMessage(errGet, "error when checking login cache")
 	}
@@ -89,6 +94,7 @@ func (op *OPAuthenticationCredentials) isPersistentAuthenticated() error {
 		op.l.Debugf("No user with user/passwd: %v/%v", op.data.Code, op.data.Password)
 		return ErrorUnknownCredentials
 	}
+
 	if checkPasswordHash(op.data.Password, userData.PasswordSALT, userData.PasswordHASH) {
 		// credentials match, fill authentication info
 		op.AuthenticatedUser = UserAuthInfo{
@@ -97,20 +103,30 @@ func (op *OPAuthenticationCredentials) isPersistentAuthenticated() error {
 			SessionID: generateSessionID(),
 		}
 
+		op.l.Debugf("authenticated user: %v", op.AuthenticatedUser)
+
 		// save to credentials cache
+		// TODO: place in goroutine
 		if errCredenCache := op.saveToCredentialsCache(); errCredenCache != nil {
+			op.l.Debugf("error: %v when saving to credentials cache", errCredenCache)
 			return errCredenCache
 		}
 
 		return op.saveToSessionCache()
 	}
+
 	op.l.Debugf("Bad password: %v for user: %v", op.data.Password, userData.ID)
 	return ErrorUnknownCredentials
 }
 
 // saveToLoginCache Method saves credentials to login cache.
 func (op *OPAuthenticationCredentials) saveToCredentialsCache() error {
-	return cachecredentials.GetCache().Set(badgerwrap.KV{
+	i, errCache := cachecredentials.GetCache(op.l)
+	if errCache != nil {
+		return errors.WithMessage(errCache, "could not access cache")
+	}
+
+	return i.Set(badgerwrap.KV{
 		Key:   []byte(op.data.Code),
 		Value: []byte(op.data.Password),
 	})
@@ -119,7 +135,12 @@ func (op *OPAuthenticationCredentials) saveToCredentialsCache() error {
 // saveToSessionCache Method saves credentials to session ID cache.
 // Method placed in this file as operation par of user creation and (re)login.
 func (op *OPAuthenticationCredentials) saveToSessionCache() error {
-	return cachecredentials.GetCache().Set(badgerwrap.KV{
+	i, errCache := cachecredentials.GetCache(op.l)
+	if errCache != nil {
+		return errors.WithMessage(errCache, "could not access cache")
+	}
+
+	return i.Set(badgerwrap.KV{
 		Key:   []byte(op.data.Code),
 		Value: []byte(op.AuthenticatedUser.SessionID),
 	})

@@ -1,8 +1,15 @@
 package authentication
 
-import "github.com/TudorHulban/GinCRM/pkg/cache/cachecredentials"
+import (
+	"github.com/TudorHulban/GinCRM/pkg/cache/cachecredentials"
+	"github.com/pkg/errors"
+)
 
 // logoutCredentialsCache Helper deletes credentials to clean up user access.
 func logoutCredentialsCache(usercode string) error {
-	return cachecredentials.GetCache().DeleteKVByK([]byte(usercode))
+	i, errCache := cachecredentials.GetCache()
+	if errCache != nil {
+		return errors.WithMessage(errCache, "credentials not cleaned")
+	}
+	return i.DeleteKVByK([]byte(usercode))
 }
